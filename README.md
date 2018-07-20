@@ -8,6 +8,7 @@ Predicting Usefulness of Code Review Comments using Textual Features and Develop
 
 Mohammad Masudur Rahman, Chanchal K. Roy and Raula G. Kula
 ```
+Read our [paper](http://homepage.usask.ca/~masud.rahman/papers/masud-MSR2017a.pdf)
 
 **Abstract:** Although peer code review is widely adopted in both commercial and open source development, existing studies suggest 
 that such code reviews often contain a significant amount of non-useful review comments. 
