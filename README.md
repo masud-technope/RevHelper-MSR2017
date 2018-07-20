@@ -31,7 +31,7 @@ Comparative Study
 - All ```non-useful``` comments (498)
 
 
-Tools/Items for Replication:
+Tools/Items for Replication
 --------------------------------------
 - Stop words
 - Python keywords
@@ -43,11 +43,11 @@ Tools/Items for Replication:
 
 Experimental Data
 --------------------------------------
-**Review Comments for Evaluation:***
+**Review Comments for Evaluation**
 - All useful comments (618)
 - All non-useful comments (498)
 
-**Review Comments for Validation & Case study:**
+**Review Comments for Validation & Case study**
 - ```CS``` (81)
 - ```SM``` (99)
 - ```MS``` (99)
@@ -65,7 +65,7 @@ Experimental Data
 Please cite our work as
 -----------------------------------------
 ```
-@INPROCEEDINGS{msr2017amasud, 
+@INPROCEEDINGS{msr2017a-masud, 
 author={Rahman, M. M. and Roy, C. K. and Kula, R. G.}, 
 booktitle={Proc. MSR}, 
 title={Predicting Usefulness of Code Review Comments using Textual Features and Developer Experience}, 
