@@ -1,0 +1,81 @@
+60805290-6965-nu	What the heck was the point of all the `JSONView` handlers in the test code? We don't run `dev_appserver` as part of our test suite so I am re4ally confused what the purpose of these was. Although maybe it is best left to my imagination...
+60774118-6964-u	not that it matter much but we could remove the indentation with ```if e.content and ....```
+60750445-6961-u	You can see how we check for running jobs in the `run` method on our `ScrapyJobStarter` class. app.domain.scrapy_management.ScrapyJobStarter#run
+60234432-6927-u	Instead of double negative, I think it's easier to read if it's `if u'\u00b7' not in address_container or u',' in address_container`
+60118747-6915-u	I believe `COMPANY_NAME` should be used here. ("cname" instead of "name") -- check out app.domain.profile.Profile to see where it's used
+59915296-6910-u	I think you can remove the `?` from the url.
+59915417-6910-u	Personally I'd like to see this `60` as a constant at the top. I think it just makes it easier to scan and is more organized.
+59915592-6910-nu	Aren't most of these a duplicate of what you have in `error_keys.py`?
+59916115-6910-u	I think this and `SYNC_STATUS` object should be combined. If you want just error keys you could do something like: ```python class SYNC_STATUS(object):     IN_SYNC = 'IN_SYNC'     NOT_IN_SYNC = 'NOT_IN_SYNC'     NOT_FOUND = 'NOT_FOUND'     # you get the idea      ERROR_STATUSES = [NOT_IN_SYNC, NOT_FOUND, TECHNICAL_PROFILES, ...] ```
+59916659-6910-u	I don't understand what the point of this is exactly. Why can't we just: ```python API_KEY.LISTING_SYNC_PRO_STATUS: directory[UBERALL_API_KEYS.SYNC_STATUS] ``` ?
+59916821-6910-u	Can we make these `LSP_DIRECTORY_TYPE` or even just `DIRECTORY_TYPE`? I don't know if it really matters that we associate it with LSP, the point is just to not use the string directly to prevent errors.
+59917101-6910-u	You should be able to just `directory.get(UBERALL_API_KEYS.LISTING_URL)` instead of needing this `if` statement.
+59919682-6910-u	I don't see `TEST_MAPPED` or `TEST_SUPPRESSED` really used anywhere. Am I missing something? Can these be removed?
+59933901-6910-u	What is the point of this `get_unmapped_sync_statuses` method? I just don't understand why it is necessary.
+59462835-6874-u	I don't think this is used anymore; the `fetch_functions.py` file won't even try to build a `DemonJSWrappedResponse` if the EDGE status code is 504. You can remove this constant, the message constant below, and the logging statement below that uses them.
+61282848-6869-u	This does not feel like the right approach to me.  You've really just moved around the bad habits that were being encouraged with the `FacebookOauthClientMock` class above with some clever code.  Assuming that we like the current pattern for setting exceptions on the `FacebookOauthClientMock` class, then I'd advocate for a different approach than what you've got here.  Instantiating a class that _looks_ like a method in a `with` statement strongly suggests to me that what you're really looking is a decorator.  Beyond that, you've left a whole bunch of old pylint-disables that aren't valid anymore with this approach.
+59057732-6864-nu	maybe we should do this after the save? Are they already in the datastore? Not sure how the reviewGetFsm will handle if the save hasn't occurred yet.  
+58899255-6856-u	Maybe this works because you aren't returning a value, but typically you can't yield and return from the same thing. Yielding implies it's a generator and to be consistent you should probably `raise StopIteration()`
+58917304-6856-u	It's not actually true that they have to go. returning None stops the generator, though returning anything other than None is not valid. The difference is that ```return None``` will work inside a try/except that is handling exceptions for a parent class of StopIteration, but StopIteration will get handled by any of those try/excepts it is nested in and a lot of our code does handle ```Exception``` (though it shouldn't be in most cases).
+58798288-6855-u	In order for the transaction to be really meaningful you have to pull the `ReviewCommentModel` out of DataStore inside the transaction.
+58882671-6855-u	@sgryschuk-va I think you're right.  The ReviewCommentModel does have a `buildKey()` function so that should probably be used to avoid eventual consistency.  
+58894827-6855-u	The ReviewCommentModel has the account group id on it.  You shouldn't have to pass it in to this api
+58441403-6843-nu	I saw Shawn's comment but how do we know that this `account_group` object is correct? Is it just because this is inside the deferred task?
+58100342-6837-nu	Thoughts on just making these ```TO``` and ```FROM```?
+57970789-6830-u	`self.parse_one_item` return None if item is not there and we end up adding None to the results. There should be check for that.
+57908078-6819-u	Forgot to remove `print` here
+57616477-6804-u	I think it is better to give queue name for a pipeline so that we know when they're queued. I saw some occurrence of `ReviewDeletePipeline.start(listing.entityKey, queue_name=QUEUE.REVIEW_DELETE)` which means we already have the queue called 'review-delete'
+57606476-6796-u	super minor but it'd be nice if the order of arguments matched across the functions  ex. ```def create_location(account_group, business_id, category_ids)```
+57357393-6787-nu	I think you should keep the OTW tests though. The other DirXion sources still have their own OTW tests.
+57066920-6779-u	I'm fine with using the `_tag` but isn't there a `_url` arg? What is the difference?
+57034172-6776-u	Could add a `tag` parameter here for tracking.
+57034304-6776-u	It might be nice to name this so it's clearly distinguishable from `UberallLocationModel.get_or_create`.
+57047822-6776-nu	I'm surprised `vobject` doesn't have a `get_by_id` method that does this.
+57029411-6775-nu	Just out of curiosity, what is the difference between using this compareDicts and self.assertDictEqual?
+57030339-6775-nu	It might be better if this were in `SocialSearchCommand._normalizeResponseContent` so that this problem can never affect the other social sources (which I think are also mostly API sources).  I could easily be missing some details and be wrong though.
+57018736-6774-u	I think it would be a LOT faster, if you were to do a BigQueryInputReader over a query like:  ``` SELECT url, uid, pid, COUNT(*), GROUP_CONCAT(lid) FROM [datastore.LIS] WHERE src = 10010 GROUP BY url, uid, pid HAVING COUNT(*) > 1 ```  There is only about 3300 duplicate urls. This would save a ton of read costs as well as time.
+57019213-6774-u	The `BigQueryInputReader` takes a job id as a parameter, I can show you an easy way to get that.  Example here: https://github.com/vendasta/scheduler/blob/a77618cdcb47c4a9d254b9b658b6c5f2b8ab8875/src/app/scheduler/pipelines.py#L273  Let me know if you need a hand.
+57020965-6774-u	:+1: I'm using BigQuery pipeline in https://github.com/vendasta/CS/pull/6775
+56662926-6763-nu	I had the same question too, but his method avoids list indexing errors by providing him with an empty string instead. It has similar behaviour to ```python website_href = website.attrs.get('href').split('?') data[KEY.WEBSITE] = website_href[0] if website_href else '' ```
+56531592-6757-u	i think ReviewModel is in the review module, not listing
+56402645-6744-u	what if I pass in False for `has_digital_agent_response`
+56402955-6744-u	this logic should be in the ReviewComment model.
+56418897-6744-nu	snake_case for one and camelCase for the other?
+56419612-6744-nu	Is there logic where we set `action_status=ReviewActionStatuses.OWNER_RESPONDED.value` if `self.postedByDigitalAgentFlag` is True, even if they didn't send a `self.postedByOwnerFlag`.? I think that's what we discussed earlier.
+56422628-6744-u	You can take the `and not self.posted_by_owner` check off as it won't do anything
+56246675-6742-u	Will this ever execute before the `account_group.update` task? Have you looked at `VAccountgroupModel._update` method? Just curious about whether all the "syncing" tasks should be deferred from the same location.
+55408748-6701-nu	Guess this needs to go above DataProviderMapping for pylint.
+55394911-6699-u	we  could just ```return ApartmentRatingsHandler._scrape_external_id(bs) is not None``` 
+55240472-6683-u	I'd feel safer if this used the constant.  `GLOBAL_SOURCE.GOOGLE`
+55284866-6683-nu	Is it correct that it's `src` here but you reference `source` in the listing entity below?
+55049290-6673-u	I was wondering about this, shouldn't this contain @checkOutputFields(KEY.COMPANY_NAME, KEY.EXTERNAL_ID)? so rather than failing in scrape we fail in _scrape.
+55031245-6670-u	I think this'd be a little clearer called `CHECK_PAGE_SIZE_ON_PAGE`
+54464092-6643-nu	This test name seems bad. "Listing Missing All But Website" implies that all fields are missing except website but I see company name & country in the `expect` dict. I don't really understand what case this is trying to test.
+54468978-6643-nu	test_scrapeListingMissingNapDataExceptWebsite   might work.
+54298202-6637-u	I generally view type-checking as a code smell, but it's a little more widely accepted in python than some of the languages I came up on.  There's no reason we couldn't just use ``` VAccountGroup.get_by_agid(listing.agid) ```.
+54301198-6637-u	Check to see if some of your existing tests for ``` convert_cid_to_place_id ``` can be rewritten to test against this new function alone.  That would bring us closer to having true "unit tests" for this functionality..
+54255294-6630-u	You didn't add any doc comment about the most confusing arg: `fuzzy_mode`. Please describe what effects this parameter will have on the function.
+54187314-6627-u	docstrings for this and ```_scrape_company_name```?
+54172745-6625-u	For regex's that get used frequently, I think it is better to use `re.compile` and save the value in a module/class constant. As is, this regex will get compiled every time this function called.
+54330196-6620-nu	this whole test strikes me as pretty smelly assertions in a for loop, dynamic class instantiation that really depends on whether ``` self.tokenBreakingExceptionClasses ``` is up to date or not, no guarantee/proof that ``` self.fbPage.tokenBroken ``` is reset on subsequent iterations through the loop. 
+54113876-6617-u	this is still going to error out if you have `address_parts` as `[]`  I believe this was the error that caused the lockdown: ``` IndexError: list index out of range ``` btw, this will be a good test to have in your unit tests by just passing in empty address and see if this function handles it or not
+54115295-6617-u	we stripping 'None ' here? does there pages explicitly have `None` in the address? or is it the result of us processing the data. just seems odd
+53967124-6609-nu	This suggests to me that ```stop_words.remove_stop_words_from_text()``` is doing the wrong thing.  I think it's pretty silly that you'd need to convert a string to unicode, do an operation on that unicode and then convert it to unicode **again**.
+53977406-6607-u	Don't think you can do this. address, city, state, and zip aren't in checkOutputFields which means there have been cases where they haven't been found in the listing and if it isn't found here then strip will fail since it doesn't exist as a method for None
+53994119-6607-nu	```if address_parts and address_parts[0].text != address``` seems a little more straightforward (I really hope this isn't going to turn into another situation where I am completely messing up demorgan's law)
+53994518-6607-nu	```if not address_parts and address_parts[0].text != address``` damnit
+53700077-6579-u	usually we add these commented lines above each HTML file u add: ``` # Updated: <when it was added> # view-source: <URL> # Testing Purposes: <what we gain from this test> ```  seems like a good practice to follow. Have a look at https://github.com/vendasta/CS/blob/6bb648d773a0c6dcdd1d288e075ec6b20c31b18e/test/domain/listing_handlers/data/apartments/__init__.py#L9-L9 for an example.
+53700528-6579-u	I think ```python address_split = street_address.split(',') if len(address_split) == 1 or (len(address_split) == 2 and address_split[1] == ''):     street_address = street_address.replace(',', '') else:     street_address = address_split[0].strip() + ' ' + address_split[1].strip() ``` could be condensed down to   ```python street_address = facility_address.find('span', {"itemprop": "streetAddress"}).text.strip(u', ') ```
+53700900-6579-u	same here. ```.strip(u',')``` seems like what you want so you aren't also removing commas inside the text. granted that shouldn't really be an issue here. more so in city or address.
+53701223-6579-u	I believe we can do this too: ``` findText(facility_address, name='span', itemprop="streetAddress").strip(u', ') ```
+53701628-6579-u	seems more clear to me than using `{}` in function argument..just my preference :smile: 
+53702024-6579-u	yeah, another thing..lets make these functions `static`
+53691966-6578-u	This is a little more verbose, but I find it easier to understand that the code is intending to handle none type exceptions:  ```python nap_address = account_group.address.lower() if account_group.address else None listing_address = listing.address.lower() if listing.address else None address_match = nap_address == listing_address ```
+53695207-6578-nu	Is it possible for `listing` to be `None` here? If so, it could cause an error.
+53509550-6566-nu	Why was this change required? I don't see any usages of this function in the PR. I do see calls to `createFacebookPageService`, was it already trying to pass the `put` kwarg but it wasn't being respected?
+53483246-6562-u	Did you forget to delete something? Why is there this sentence fragment? `The expected untouched return object`
+53472976-6560-u	could just ``` or ```
+53391558-6553-nu	i dont see where you added the ``` FEATURED_BUSINESSES ``` key anywhere black magic?
+53384770-6551-u	What's with the last `makeTestListing`? I think this can be removed.  I'd also like to see this test narrowed down to make it clearer what's actually being tested. Looks like this change only affects the address, so I think the rest can be cleaned up.
+53382094-6549-nu	~~Can fromModel ever return None?~~ Looks like that should never happen.
+53378470-6548-u This looks like a new function. It is being used on line 63 in this file which replaced the old usage of `self._rescrapeReviewsForListing(lid)` but I don't see that old (unused?) function being deleted.

@@ -1,0 +1,108 @@
+60805290-6965-nu	What the heck was the point of all the `JSONView` handlers in the test code? We don't run `dev_appserver` as part of our test suite so I am re4ally confused what the purpose of these was. Although maybe it is best left to my imagination...
+59915592-6910-nu	Aren't most of these a duplicate of what you have in `error_keys.py`?
+59057732-6864-nu	maybe we should do this after the save? Are they already in the datastore? Not sure how the reviewGetFsm will handle if the save hasn't occurred yet.  
+58441403-6843-nu	I saw Shawn's comment but how do we know that this `account_group` object is correct? Is it just because this is inside the deferred task?
+58100342-6837-nu	Thoughts on just making these ```TO``` and ```FROM```?
+57357393-6787-nu	I think you should keep the OTW tests though. The other DirXion sources still have their own OTW tests.
+57047822-6776-nu	I'm surprised `vobject` doesn't have a `get_by_id` method that does this.
+57029411-6775-nu	Just out of curiosity, what is the difference between using this compareDicts and self.assertDictEqual?
+57030339-6775-nu	It might be better if this were in `SocialSearchCommand._normalizeResponseContent` so that this problem can never affect the other social sources (which I think are also mostly API sources).  I could easily be missing some details and be wrong though.
+56662926-6763-nu	I had the same question too, but his method avoids list indexing errors by providing him with an empty string instead. It has similar behaviour to ```python website_href = website.attrs.get('href').split('?') data[KEY.WEBSITE] = website_href[0] if website_href else '' ```
+56418897-6744-nu	snake_case for one and camelCase for the other?
+56419612-6744-nu	Is there logic where we set `action_status=ReviewActionStatuses.OWNER_RESPONDED.value` if `self.postedByDigitalAgentFlag` is True, even if they didn't send a `self.postedByOwnerFlag`.? I think that's what we discussed earlier.
+55408748-6701-nu	Guess this needs to go above DataProviderMapping for pylint.
+55284866-6683-nu	Is it correct that it's `src` here but you reference `source` in the listing entity below?
+54464092-6643-nu	This test name seems bad. "Listing Missing All But Website" implies that all fields are missing except website but I see company name & country in the `expect` dict. I don't really understand what case this is trying to test.
+54468978-6643-nu	test_scrapeListingMissingNapDataExceptWebsite   might work.
+54330196-6620-nu	this whole test strikes me as pretty smelly assertions in a for loop, dynamic class instantiation that really depends on whether ``` self.tokenBreakingExceptionClasses ``` is up to date or not, no guarantee/proof that ``` self.fbPage.tokenBroken ``` is reset on subsequent iterations through the loop. 
+53967124-6609-nu	This suggests to me that ```stop_words.remove_stop_words_from_text()``` is doing the wrong thing.  I think it's pretty silly that you'd need to convert a string to unicode, do an operation on that unicode and then convert it to unicode **again**.
+53994119-6607-nu	```if address_parts and address_parts[0].text != address``` seems a little more straightforward (I really hope this isn't going to turn into another situation where I am completely messing up demorgan's law)
+53994518-6607-nu	```if not address_parts and address_parts[0].text != address``` damnit
+53695207-6578-nu	Is it possible for `listing` to be `None` here? If so, it could cause an error.
+53509550-6566-nu	Why was this change required? I don't see any usages of this function in the PR. I do see calls to `createFacebookPageService`, was it already trying to pass the `put` kwarg but it wasn't being respected?
+53391558-6553-nu	i dont see where you added the ``` FEATURED_BUSINESSES ``` key anywhere black magic?
+53382094-6549-nu	~~Can fromModel ever return None?~~ Looks like that should never happen.
+
+15675827-1025-nu	I'm agnostic when it comes to camel case vs. snake case, but could it at least be consistent for all of `context`? 
+14798024-1006-nu	Syntax consistency.  You've got a space before and after the ```:``` on the first two key:value pairs here, then just a space after for the next two.  I also prefer *not* quoting the keys in JS objects... but that may just be me.
+14882062-1006-nu	You should be able to upgrade to ```knockout-3.1.0.js``` without issue.  Also, for any strongly versioned JS files on VFF I recommend using the route prefix ```/vstatic/js/```.  This route has a much longer cache time specified for JS files that will not change.
+14488637-999 -nu	Hmmmm.  Wouldn't a more "correct" (pinky in the air) way be to have LinkedinSocialPost override this method? 
+14264437-996-nu	Note, in regards to checking of the scheme it would be more resilient to use urlparse.  EG: ```python import urlparse url = 'www.testing.com' parts = urlparse.urlparse(long_url) if not parts.scheme:   long_url = 'http://%s' % long_url  ```
+14524928-996-nu	Any reason for the use of a while loop here? By convention a for loop should be favoured when iterating over a collection vs looping on a condition.  eg: ```python for current_url in urls: ``` 
+13867091-981-nu	There could also be a system problem at bit.ly.  I'd recommend looking at all the places where shorten_links() is called and handle it the way FetchShortenedLinkHandler does it:  ```                 result, stat_code = shorten_links(long_url)                 if result:                     plan A for when the shortener works                 else:                     plan B for when the shortener fails ```
+13619134-970-nu	Since there is no more domain object, we should probably ```s/entity/account/g```.
+13618425-968-nu	it feels a little weird to float an inline element here. As you are already applying styling to the ```<p>``` tag why not make it ```display: inline``` and remove the float?
+13658591-967-nu	A mock, shouldn't be ugly though. A mock is a standard part of unit testing and the code shouldn't be "distracted" by an import and a pylint check that is redundant.  Personally I find it much more clear to have all the imports at the top of the file and the mocks designated with a comment. As per the ongoing discussion, I feel our test cases / pylint - test target will be much easier to maintain if we globally disable some of these pylint checkers.   On Tue, Jun 10, 2014 at 11:51 AM, Roger Blum <notifications@github.com> wrote:  > In test/mgmt/account_model_test.py: > > > @@ -40,36 +40,53 @@ def setUp(self): > >          self.account = self.create_account() > > > > @jredl-va <https://github.com/jredl-va> Please have a look at our test > code. Putting the import statement immediately before the mock, and > preceded by the pylint: disable=W0612 is standard practice, and I happen > to agree with it. For the cost of some redundancy and a minor transgression > of coding standards (remember, imports are not *required* to be at the > top of the file), the ugliness of creating a mock is gathered together and > made more clear. > > — > Reply to this email directly or view it on GitHub > <https://github.com/vendasta/SM/pull/967/files#r13608529>. >
+13449212-965-nu	I think that "cache_ajax" would be easier to understand.  You should also add this new parameter to all places where SMAjaxCall is called.
+13087643-946-nu	If I remember correctly, ```content_type='text/plain'``` was added as IE (not sure which version) didn't like "application/json" as response. https://github.com/vendasta/SM/blob/develop/src/app/views/base.py#L165 
+12958938-945-nu	I know you didn't change this, but same comment here about Handler names.  More specificity (particularly when the main descriptor is "Post") is really helpful to figure out what this handler actually serves.  In this case ```SocialPostLandingPageHandler```.
+12959625-945-nu	Are you certain that the profileImageUrl never has any query params on it already?
+12960245-945-nu	What is ```.profile-name```?  An H2 (if so then you don't need this rule)?  Something else (then why isn't it an H2)?
+12978951-945-nu	I'm assuming that SocialPost is to be treated as an abstract class and the factory will only create FacebookSocialPost, TwitterSocialPost, etc.
+12905978-942-nu	I'm a fan of doing ``` used_blobs = [     blob      for blob in blob_info      if blob.get(KEYS.SERVING_URL) in text ] ```
+12696197-936-nu	would it make sense to include ```%s<post_id>/<return_to>``` in ```URLS.ACCOUNT_POST``` variable for consistency?
+12236510-923-nu	I'm not great with javascript so I'm not 100% sure on this, but I think we need to be careful with rebinding elements here. account-fields seems fairly general, but the countryStateViewModel doesn't apply to every account-field I'm guessing.
+12247450-923-nu	If we are getting `account-fields` by id there should only be one on the page, correct? Or do we have multiple elements with the `account-fields` id (hopefully not...)?
+12068780-917-nu	why do we have to pass ```$data``` here?
+10575168-863-nu	shouldn't ```doc_api_user``` be sm too?
+9951012-836-nu	 ``` import operator posts.sort(key=operator.itemgetter(CS_KEY.POSTED_DATETIME), reverse=True) ``` will be faster
+9951416-836-nu	Isn't this going to skip the first page? ```      history, next_url = fetch_posting_history(spid, page_size=200)      while next_url is not None and not found_oldest_needed_post(history, oldest_posting_date):           history_page, next_url = fetch_posting_history(spid, next_url=next_url) ```
+9951804-836-nu	fyi, this error isn't the one roger and I were arguing over. This one is because it thinks you are using too many variables inside your function like ```all_twitter_ssids``` and wants you to try to reuse some instead
+
+30041882-1224-nu	I don't think we need `if` here, just `return self.wl_favicon` will do.
+30137052-1223-nu	I thought we were going to remove clientTags from core to migrate over common authenticated social accounts. Are we going to do that later or this is the way we will be moving forward with?
+29720657-1215-nu	is there a difference between `TEMP_SPID` and `DUMMY_SPID`?
+30062001-1215-nu	Microsite is imported as MicrositeModel which is a vObject class. We find this naming a little confusing. We had to take a closer look at the models/microsite.py file to make it clear in our minds what is what.
+29376698-1208-nu	Any reason these two need to be in seperate scripts? Also, we already use it everywhere else so why not here, but I think the `type="text/javascript"` is unecessary as it is the default type: http://stackoverflow.com/questions/14323376/do-html5-script-tag-need-type-javascript
+26536318-1158-nu	@utandukar-va the reasoning is that all products will be saving all info about AccountGroups from now on.  The major change with using vObject to do so though is that you will not need to update your representation of that data until you wish to use it.  So, we'll be able to add new fields in very quick iterations but individual products will only need to update their copy of the AccountGroup vObject when they wish to start using a new field.  Now no data migration will be necessary to start using it either.  You simply update and all the data will already be there.
+25737161-1151-nu	Could reduce this a bit by using defaultdict. Not totally sure what the implications are by using it, but I've seen it a lot in our code. Thoughts? ``` syncable_services = defaultdict(list) ...         for account in accounts:             syncable_services[service_type].append(account) ```
+22471586-1078-nu	Can you make the two `MicroSite` / `Microsite` spellings consistent?
+22471868-1078-nu	Some more spellings (`MicroSite`) that might also be inconsistent after a previous comment of mine (here and line 105 above).
+22472790-1078-nu	Do you only notify if there is a `job_id`?
+22473053-1078-nu	Could probably do a `HEAD` here.
+22473855-1078-nu	Do you prefer this to the `self.abort(404, 'My message')`? I prefer `self.abort()`.
+22473953-1078-nu	I think this was in place because something in the API response was exposing the apiKey. Is this no longer possible?
+22497058-1078-nu	It's pretty non-obvious, but the VApi friendly way to write the messages in the `validate_arg_*()` methods is to do it knowing that the `Arg "identifier":` will be prepended.  So in this case, something like: ```python raise ValidationError('%s already exists.' % customer_identifier) ``` 
+21006155-1053-nu	same as the SyndicationClient, it doesn't look like this is providing value anymore and can be removed
+21036238-1053-nu	The recommendation was that a tech debt be logged to move all of this in to ElasticSearch once it's ready to go.
+21095666-1053-nu	Does this kick off the  `get_ld status`, `fetch_listings` and `fetch_synidication_orders` all asynchronously all at once? That's pretty cool. :+1: 
+21105527-1053-nu	Technically you wouldn't need to use the async method if you're putting it in a tasklet. ``` @ndb.tasklet def get_listing_distribution_status_async(agid):     client = ListingDistributionClient(VBC_USER, VBC_API, configuration=VBC_CONFIG)     raise ndb.Return(client.listingDistributionGetStatus(agid)) ```
+20389670-1048-nu	`memcache_slug_for_msid`?
+20389015-1046-nu	Might be nicer to use `assert_has_calls`, but this works fine
+20390521-1046-nu	The 2nd param there is actually a kwarg. Should probably be doing do `@mock.patch('app.domain.cleanup.delete_microsite', new=mock.MagicMock())` in case the patch signature ever changes if we update mock
+19554173-1026-nu	Does `wl_product_name` has market specific product name too?
+19416959-1019-nu	What is `data.location.percent`? Can you extend `DashboardItem` to `DashboardItemChart` and use chart one there?
+19419275-1019-nu	never mind got the answer for `percent`.
+18668652-1005-nu	I like this way better `(self.syndicationOrders && self.syndicationOrders[0].recipients) || {} `
+18532235-998-nu	apiKey probably should be required though... I mean they need it to access any of the apis right?
+18404886-994-nu	Can there be a case when we created an account group from `create_microsite_entity` and we get here then there still no account group in vbc because of some delay in account group. 
+18404954-994-nu	Also I think we should have removed this piece of code as we are already creating account group in `create_microsite_entity` if it's not there. Its just a concern why it was there initially.
+18412416-991-nu	Minor, but at this point we might as well just use `columns[1][NAME]` if `get` returns `None` it's still going to raise a `KeyError`.
+18412494-991-nu	Same as above. Should probably check `columns` is the length you are expecting.
+
+46473628-2435-nu	should this be `query.add_filter(...`
+44474605-2367-nu	Could probably just use:  ``` self.vform_handler.context = json.dumps({     'accountGroupId': self.agid,     'partnerId': 'ABC',     'leaveReviewUrl': 'review.com',     'email': 'me@example.com' }) ```
+44474749-2367-nu	for readability, you could do  ``` my_mock = self.mock_function_in_setup('app.views.reviews.generate.ReviewGenerationVForm.account') my_mock.new_callable = mock.PropertyMock(agid='AG_123', ... ```
+43841262-2340-nu	why do this instead of check ``` is_review_generation_enabled_for_account ```? ``` is_review_generation_enabled_for_account ``` further requires that the account group has a presence builder account too. In our case I think our requirement for showing that form is no different from anything else to do with review gen, which all depends on ``` is_review_generation_enabled_for_account ```.
+43843034-2340-nu	I'd use mock Account objects instead of actual Accounts. You'll need to mock ``` put ``` and ``` getByAgid ```
+43901024-2340-nu	Using the datastore stubs etc that VGaeTestCase provides makes this more of an integration test than a unit test. True unit tests will mock/stub every interaction that's external to the item under test.
+40808745-2274-nu	this fetchSocialData wasn't used anywhere
+39661504-2245-nu	Does this actually have to be mocked? I thought you could just say ```python settings.FULL_REVIEW_CONTENT_PIDS = [u'SRP'] ``` at the start of the function.
+34894469-2195-nu	Such signature  ![doge wow](http://33.media.tumblr.com/0672edc6c5d84e8d26b6c87251206c5b/tumblr_inline_mz3gp86jLm1svqzj6.jpg)
+34391874-2170-nu	Would it be worth it to write a function map rather than hammering through all these `if .. in ..` checks every time `initialize_mocks` is called?
+34045107-2153-nu	Aren't your `\w\d` here redundant? `\w` will match digits.
+33971600-2147-nu	It feels a little weird to dive into the call_args_list. That seems way we would do it with minimock.   Why not just:  ``` vbc_mock.assert_called_once_with(mock.ANY, ['ABC', 'DEF']) ```
+33834469-2146-nu	The existing color definitely has a fair bit of blue in it.  That being said, this entire section is for ```form#sign-in``` which isn't a thing on RepMan anymore...  So these rules probably don't matter at all.
+33191593-2118-nu	I think we should explicitly check for `is not None` with these... I think an empty string for city/state might be valid
+32540746-2090-nu	Can't you just attach the `.primary-action` class to the link?
+31848680-2056-nu	Do we want to account for a failure being raised from `get_result()`?
+31171031-2036-nu	kind of dumb question, do you need ```style="display: none;"``` when you already set fadeVisible
+31176659-2036-nu	`$text_color`
+31253224-2036-nu	again it seems weird to use `rem` here
+31168487-2034-nu	What is going on here? What was `error.id.substring(3)` for?  Might also be better to do:`$('input#' + id)`.
+30144590-2017-nu	I don't think you can do this partnerConfigId one because RepIntel still supports legacy market IDs for our V1 API. 
+30149494-2017-nu	Really? That scares me. I think the check would be `if account.partnerConfigId != account.marketId`
+29260471-1999-nu	this is kind of weird... normal way to do this is just set a side_effect on the mock, i.e.  ``` def my_test(self, site_data_mock):   site_data_mock.side_effect = NotFound404Error ```
+29265940-1999-nu	Hmm, so basically you want to test that it throws the exception on `get_result` instead of `get_site_data_async`? I think this will work, but untested: ``` site_data_mock.return_value = async_util.futurify(mock.MagicMock(side_effect=NotFound404Error)) ```
+29179988-1996-nu	Is this necessary? Won't the `check_success` exception basically say this?
+

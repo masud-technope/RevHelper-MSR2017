@@ -1,0 +1,288 @@
+63782990-1748-u This could be a little more simple/pythonic ```python product_name = NEW_APP_NAME if vconfig.is_feature_enabled('presence_builder_rebranding', self.pid) else APP_NAME context.update({     "product_name": context.get('wl_product_name', product_name) }) ```
+63784194-1748-u	It'd be nice to one-line this:  ```python context.update({   'product_name': context.get('wl_product_name', NEW_APP_NAME if vconfig.is_feature_enabled('presence_builder_rebranding', self.pid) else APP_NAME) }) ```
+63784250-1748-u	Breaking maybe right before the `if`. Whatever makes sense when you've got it in PyCharm
+63784331-1748-u	Well I commented the same thing as Jesse. Gotta reload these pages every once in a while.
+63604137-1747-u	Maybe `enable_listing_builder_rebrand`?
+63604244-1747-u	Maybe.
+63604419-1747-u	Minor complaint but you shouldn't really be checking against the builtin Bool objects. Something like `{% if not enable_listing_builder_rebrand %}`
+63604684-1747-u	Why are your imports so afraid of each other? They can be closer together.
+63605191-1747-u	You have the same 2 patch decorators on 3 different tests. Typically in this case it's cleaner to set up your mocks in the `setup` method. I'll show you how to do this.
+63605815-1747-u	Nice, I forget to do that pretty often
+63605869-1747-u	Thank PyCharm's auto importing ? 
+62937629-1742-u	Does this test actually assert or check anything?
+62937833-1742-u	I guess it didn't before, either. We can probably do something like this:  ```python field = GenericJsonField() field.data = '[]' try:   validate_json(field, []) except validators.ValidationError:   self.fail() ```  Whatcha think @jrolheiser-va ?
+62937982-1742-u	I kind of like the `with self.assertRaises` pattern a bit better, just because you actually call the function so it makes finding usages of it easier (I think, that might not be true haha). Like this:  ```python with self.assertRaises(validators.ValidationError):   validate_json(field, 'url') ```
+62938565-1742-u	I'm not sure if I understand what you're saying...
+62940157-1742-u	Okay, I see. I think the difference between our two approaches is that the self.fail() is explicit whereas yours is implicit. I think explicit is better in this case.
+63040952-1742-nu	Personally I find this sort of structure a little confusing, is it `not (values and required_fields)` or `(not values) and required_fields`?  I'm sure it works properly, but maybe include the parens for clarity? 
+63041774-1742-nu	https://docs.python.org/2/reference/expressions.html#operator-precedence  Interesting, the `and` will get calculated first which isn't how I thought worked. Whoops.
+62267796-1738-u	Could probably condense these three if statements
+61961593-1733-u	Awe so long popularity circles. Mind removing `popularity-circle` `.popularity-circle.popular` and `.popularity-circle.unpopular` from `_profile-sync.scss`
+62066961-1733-nu	Could maybe change this to  ``` self.showField = self.status in FIELDS_STATUSES_TO_SHOW ``` for brevity's sake
+62069524-1733-nu	Yeah, I guess `in` doesn't work like that. I'm cool with your alternative.
+61960790-1730-u	Should set a warning flash or an error flash for this.
+61943853-1726-u	Seems like a bunch of duplication.  Can't extract it at all?
+61798454-1722-u	I'm guessing it's right too. The only way I know to get what it actually is, is to look at a source that has a listing on the source, and see where that url takes you. Might be hard to find one though.
+61798555-1722-u	Should this be `opendi`?
+61799184-1722-u	I believe, for Canada at least, it's called Opendi. https://www.opendi.ca/ Not sure about the U.S. Stadtbranchenbuch appears to be the German version.
+61510090-1715-u	Surely this, or something like this, is in _colors.scss?
+61510378-1715-u	@bjohnson-va this is the css file.  The ```_profile_sync.scss``` is using the scss variable for the colour
+61510777-1715-u	does it have to be ```eaeaea```? We have ```$SECONDARY_BACKGROUND_COLOR = #efefef``` which is pretty damn close
+61511277-1715-u	I'd prefer standardization over mock-following. Your call.
+61511327-1715-u	Dammit.  Why do we commit our CSS files :C
+61581964-1714-nu	this is significantly easier to read ?  
+61346453-1710-u	Good call.  Grab the one from the AccountGroup.
+61333312-1709-nu	Does it need a type or popularity?
+61168438-1706-u	@rwiebe-va I think this overlaps with your work in https://github.com/vendasta/MS/pull/1705.
+61168852-1706-u	Ah yes it does... We can just do them here I suppose.
+61169357-1706-u	No worries, couple things for this: - totalListingSyncProSources appends a space on to the end, so this will have two spaces after it. - Could you add "additional" after the span to make it read a little better while it loads. - Also could remove the "+" being appended.  i.e. https://github.com/vendasta/MS/pull/1705/files
+61104603-1700-nu	So "technically" the `microsite` is not guaranteed to be present (hence the `hasattr` check at the top of the method) however it looks like the only handler that uses this handler (besides `AuthenticatedEditSiteView` which requires msid) is `GetOneMonthlyBillingReportForPartner` so you are pretty safe.  Having said that you might just want to add a `if not microsite: return False` at the beginning of this method...maybe?
+61104950-1700-nu	This is super minor but I would replace `market_id` here with `getattr(self.microsite, 'market_id', None)` and remove that stuff at the top of the method since we only need it here and, depending on the config, the code might not even get here.
+60961274-1697-u	could be ```.free-listing-sync h1``` since we have nothing underneath
+60961367-1697-nu	Why did we add width here?
+60961401-1697-nu	and here?
+60917718-1692-u	We should refactor the code in `sync.py` to use this `SocialSync(self.microsite.msid).get_number_synced_profiles()` method.
+60917794-1692-u	Can delete.
+60926312-1692-u	Looks like this is based off an older version, may want to rebase. But this should just be empty now instead of "--".
+60766099-1690-nu	we don't have to check for empty string either? 
+60755184-1689-u	do we often leave in log statements?
+60755659-1689-nu	Could move this logic to a function and add some jasmine tests perhaps.
+60669014-1688-u	Why is this necessary?  Your jinja condition was already doing this logic.
+60669369-1688-u	When that happens, you often just need to be more specific with your sass.  Eg: ``` .outer_div {   .inner_div {     .additional_wrapper {       .sync-pro-header-right {         width: 290px;       }     }   } } ```
+60736152-1688-nu	If it's in sass that's the case, but inline styles trump everything that isn't marked with ```!important```
+60754888-1688-u	Crazy idea.  We could use the [jinja set keyword](http://stackoverflow.com/questions/3727045/set-variable-in-jinja) to avoid duplicating this in multiple spots  ``` { % set show_listing_sync_pro_sections = listing_sync_pro_enabled  or listing_sync_pro_active_for_account % } ```  ... and then use `show_listing_sync_pro_sections` instead of these boolean pairs.
+60658765-1684-u	See my comments: https://github.com/vendasta/MS/pull/1683
+60658878-1684-u	You mean "Free Listing Sync" right?
+60659192-1684-nu	Lol man it sucks doing this in knockout.
+60633774-1683-nu	Is this getting formatted correctly? There is a jinja filter for display our datetime objects in a human readable format.
+60655089-1683-nu	Instead of this I think you should be using a filter: https://github.com/vendasta/MS/blob/develop/src/app/views/jinja_ext/util.py#L49  Also if you do it the way you've shown above you should be using a constant to make sure we have consistent date(time) formatting.
+60626265-1682-u	yeah @rwiebe-va that's wrong... 
+60491475-1674-u	Since you're here, I would just rip out the inline stuff as well
+60493592-1674-u	wouldn't both of those be true, anyway?
+60489793-1673-nu	whoa, that's a mouthful
+60492817-1673-nu	Of course you'd say that lol
+60468974-1670-nu	Not really important, but should we pare this down to just `[GET]`?
+60476145-1670-u	I don't think the `send_message()` is needed here. When `open_dialog()` is triggered on the click of the `Activate` button it checks if there is no sales person linked to the account. If that is the case it triggers the ajax call to set hotness in ST. If there is a sales person linked to the account nothing is triggered - as the trigger will occur when they click the `Send` button in the modal.   Maybe this was a poor way of doing it, but the issue was that we wanted the hotness to be triggered on the clicking of the activate button on the banner if there is no salesperson. But if there is then it was to be triggered on the actual sending of the message. 
+60314304-1668-nu	Is it ever possible to get a failure?
+60314824-1668-u	Doesn't need to be declared outside the conditional and then reassigned.  It's only used the one time
+60315071-1668-u	we should be leaving a line in between each rule, including nested ones
+60315341-1668-u	Should be indented under the jinja statement
+60315494-1668-nu	LSP should probably be title cased since it's a name
+60322745-1668-u	Depends who you ask.  But, agreed.
+60322846-1668-u	"sale**s**"
+60323021-1668-u	I thought that was the expectation of our scss linter?
+60323543-1668-u	"sale**s**" representative
+60323812-1668-nu	May want to check if this account group was found for the account group id before `user_interested_in_listing_sync_pro` and if it doesn't you could probably return `{ 'success': False }`
+60325403-1668-nu	I think that should be the responsibility of the API endpoint in salestool.  Let's keep this AJAX endpoint lightweight.
+60415167-1668-nu	Just a reminder we have to setup the pubsub topics on MS/ST for each environment when they are deployed.
+60415258-1668-u	Super minor, but technically this bracket should not be indented.
+60415581-1668-nu	In the future I would just return the `sales_person_details` dict from this method and then if the view (or whoever wants to make use of this method) chooses to serialize it to json they can do that on their own. As it is right now if, for example, they wanted to add an extra key/value they would have to deserialize, add key/value, and then serialize it again which is obviously not ideal.
+60416233-1668-nu	Only problem is this code will fail on the next line because `partner_id` and `market_id` don't exist for `None` object in which case we should probably return a 404 or something.  I don't think it's a big deal though because it's just an internal ajax endpoint that will still fail if the `account_group` doesn't exist anyway (in which case how are they even hitting this endpoint?).
+60416322-1668-nu	Given that it's an internal ajax endpoint if something goes wrong it'll just raise an exception which I think is probably okay unless we find a specific error scenario we want to handle.
+60416676-1668-nu	I don't think we should block this from getting merged but we should update ST (if it hasn't been done already) to support `MS`. Otherwise this is going to get super difficult to maintain because in ST it looks like `VBC` is hitting their api.
+60416813-1668-nu	Same here.
+60416834-1668-nu	Same here.
+60416852-1668-nu	Same here.
+60416998-1668-nu	In the future JS should be written with methods/variable using `camelCase` instead of `snake_case`.
+60417175-1668-nu	Lol empowertising.
+60417477-1668-u	Just fyi, when you are writing code that you know will be worked on in a separate issue it never hurts to include something like: `TODO: PRD-73: update sync numbers`.
+60301727-1667-nu	Won't this mean MS won't be updated but the change will remain on AA so the two will be out of sync?
+60302005-1667-nu	Where/how is this set?
+60294188-1666-nu	I assume you'll change this `45` to something real in PRD-73?
+60294490-1666-nu	Will it always be 45 on prod? I know Pirates are adding Canada sometime this sprint, which will have a different number of sources, so we can calculate the total when we do that.  Edit: Brad is right, PRD-73 looks like the story for that.
+60297474-1666-nu	Definitely should not be a constant (i.e. 45) we can just pull from the list of directories we have. Can address in PRD-73.
+60297547-1666-nu	The number of directories can and will change without our involvement so it needs to be dynamic.
+60239978-1662-u	Instead of requiring two separate variables I would just use `self.wl_listing_sync_pro_enabled` and `listing_sync_pro_feature_enabled` to determine if `listing_sync_pro_enabled`. I'm thinking...  ```python 'listing_sync_pro_enabled': self.wl_listing_sync_pro_enabled and listing_sync_pro_feature_enabled ``` Just makes the logic in the template simpler and I don't think there is a need to send them separately.
+60240041-1662-u	See my note above, would simplify these logic statements.
+60240098-1662-u	Minor, please leave a space between your variable and `%}`.
+60249881-1659-nu	I can't really tell, but you might benefit from caching the result of `get_social_sync_profiles` I think it's used multiple times within this class. I can't really tell from the PR if it would be used more than once during a single instance of the class though.
+59642523-1649-u	Well *this* file shouldn't be here :D
+59642634-1649-nu	You're re-using the `message` variable here.  Maybe rename it to avoid confusion.
+59642944-1649-nu	I generally recommend opening a separate, direct-to-master, pull request for upgrading libraries.   This helps avoid conflicts with other people who want to upgrade the library to a still-newer version. It would also make **this** PR a lot easier to navigate.
+59643095-1649-nu	Is there not an 'ms' API user for Sales Tool? Probably shouldn't be pretending to be another project here.
+59643276-1649-u	Probably worthwhile to add a "spinner" icon while this message is being sent.
+59643447-1649-u	Can use `$PRIMARY_BACKGROUND_COLOR` here.  Check out `static/sass/partials/_vff_colors.scss`
+59643471-1649-u	`$PRIMARY_BORDER_COLOR`
+59754235-1649-u	This method should probably take an account group id and use it here, (and below) right?
+59763077-1649-nu	`dealing with triggering hotness when user shows interest`  Sounds like friday night.
+59763755-1649-u	This should be a domain method.
+59764369-1649-u	I would recommend putting this in a constant at the top of the file so it is more visible and clearly defined. ```python LSP_PRICE = 24.99 ```
+59764555-1649-u	Will the `sales_person` always have a key that is the `agid`? If this is just checking that condition it will throw a `KeyError` if it does not exist. You might want to use `sales_person.get(self.microsite.agid)` instead which only returns the value if that key exists and `None` by default.
+59765493-1649-nu	Minor, but I think this would be a bit more readable if you grabbed the account group off the sales person first.  Part of this is just preferred style but something like: ```python account_group = sales_person.get(self.microsite.agid) sales_person_details = {     'salesPerson': '',     'agid': self.microsite.agid } if account_group:     sales_person_details.update({         'salesPerson': account_group['firstName'],         'email': account_group['email']         # etc.     }) return json.dumps(sales_person_details) ```
+59765702-1649-u	I believe you can just use `vapi.NoAuthAjaxHandler` instead of needing the `BaseAjaxHandler`.
+59766066-1649-u	Minor, but I'm pretty sure by default the name is set to the variable name. I think the only reason you would want to specify `name` is if the arg name you were accepting via the api is different than the variable name you want to use in the code here.
+59766311-1649-u	Generally we don't want to catch all the exceptions, only certain ones (if any) that you expect the code might throw and want to handle in a specific way.
+59766558-1649-nu	I agree, but using Brent's [Pretty Pull Requests](https://chrome.google.com/webstore/detail/pretty-pull-requests-gith/ljnjpkadhhcdniohpfilddnhahoigdec?hl=en) extension you can collapse files/directories you don't want to look at which makes it more bearable.
+59766704-1649-u	I wouldn't worry too much if you are in a rush but `_api` is essentially already used for these ajax apis so if possible (or in the future) I would use that instead: https://github.com/vendasta/MS/pull/1643/files#diff-08e3d0d956fd7d5dbe9ef8f1b85bf8c1R211
+59766859-1649-nu	Some unnecessary indenting going on here.
+59766961-1649-nu	Minor but in JS we should be using `camelCase`. It looks like you are for `salesPerson` and some of the other fields so please keep that going.
+59767610-1649-u	For colors you should always try to use the existing scss variables if possible. They will be in the same file as the `$PRIMARY_BACKGROUND_COLOR` variable. I don't know off hand if this specific color is described there but there definitely is one for `#fff` or `white` that you are using below.
+59767695-1649-u	Any reason for removing that `vurl`?
+59767953-1649-u	The indenting here is a bit off but please leave because I adjusted it in PRD-89 so if you change this it will just create merge conflicts.  In the future please indent anything inside a jinja `{% if ... %}` or knockout `<!-- ko if: ... -->` block similar to how you would in python.
+59768223-1649-u	You need your JS to also be behind a `{% if is_listing_sync_pro_enabled %}` block otherwise, if it is not enabled, currently the JS will still try to execute but the html will be missing (not rendered) which will likely cause errors to occur.  You can check this locally by just changing that `is_listing_sync_pro_enabled` value and making sure your page still renders without any errors.
+59788380-1649-u	That's right.  The majority of our API endpoints use cameCase for GET params, however.
+59792561-1649-u	We need to also check if the account group is in the US.  As, currently, LSP is only available in the US.
+59792578-1649-u	``` COMPLETE-FIX ```
+59792731-1649-nu	Is it possible for the account group to be missing any of these? Maybe using get would be better incase a key is missing.
+59793685-1649-nu	Ok, just as long as they keys do get passed back from the api call.
+59591036-1645-u	Is this not defined somewhere in the project so we don't just have a magic value?
+58709617-1639-nu	Would look a bit better if this validation can be moved to the beginning of the function.
+58434840-1637-u	just an fyi, `APP_NAME` can't be used for the application name as it can be changed in the whitelabel  <img width="993" alt="screen shot 2016-04-04 at 8 38 00 pm" src="https://cloud.githubusercontent.com/assets/6391814/14260804/2ebf5904-faa5-11e5-9327-d60987efffeb.png"> 
+58435137-1637-u	it's probably on the handler though if the handlers use the partner_whitelabel middleware https://github.com/vendasta/MS/blob/develop/src/app/domain/middleware/partner_whitelabel.py#L49
+58435420-1637-u	Doesn't seem to be, right now on Test it just says "back" <img width="335" alt="screen shot 2016-04-04 at 1 42 30 pm" src="https://cloud.githubusercontent.com/assets/2190961/14260898/1e8b163e-fa6b-11e5-9eff-b1283d59bdc9.png"> 
+58438327-1637-u	is the name set to an empty string?
+58442216-1637-nu	what does this do?
+58444208-1637-nu	thanks
+58398708-1636-nu	These sidebar redirect handlers are the same in rm, sm and ms, or at least should be the same. If you need to make a change here you should also make that change in the other products
+58398839-1636-nu	this is the `vauth` lib fyi
+57779350-1625-u	r'^([\w-]+(.[\w-]+)+)|(localhost)$' or r'^(\w([\w-]\*\w)\*(.\w([\w-]\*\w)\*)+)|(localhost)$' (to eliminate url like i-.am--.--.-a-url.com) Neither is perfect though...
+57780346-1625-nu	it still works without "www" right?
+57618573-1623-nu	So this function will only affect old_mappings that have no redirects? Is that on purpose?
+57629602-1623-nu	Should this be refactored to use our new update method? It looks like add_hostslug_msid_mapping and remove_msid_for_hostname together kind of work like our new update method.
+57341398-1618-nu	so these other pages are still in use?
+56535931-1614-u	I'd prefer ```python error_message = '{service_id}. Your account was not added properly. Please try again.'.format(service_id=service_id) ```
+56536235-1614-u	No semicolon needed
+56388712-1613-nu	~~can you do this with ``` ReviewDocument.get_reviews ```?~~ nevermind, you can't
+56389028-1613-u	you can set a property on this class that defines ``` agid ``` as an argument for this api. ex ``` account_group_id = vapi.StringProperty(required=True) ``` this does a lot of serialization and boilerplate validation for you. I recommend checking out other apis that subclass vapi.ApiHandler.
+56389206-1613-u	I think you mean ``` GetReviewAggregate ``` ?
+56389412-1613-u	``` for google ``` can mean bajillions of things in our system(s). I'd leave that part out of the docstring
+56389938-1613-u	i think you want to do this with knockout rather than vanilla dom manipulation. nothing technically wrong, but keeping all of our dom manipulation inside of ko view models is easier to maintain
+56431219-1613-u	you want to put this behind an _api route rather than a vform route. the _api routes are a little further down this file. anything on a vform route should probably subclass the VFormHandler class.  also your name kwarg could just be ``` name='get-review-aggregate-api' ```. I dont think the ```-name``` part is useful anyway
+56435944-1613-u	id add ajax or api to this class name because python sucks and when you have 5000 dynamically typed classes its nice to have a hint about what this thing is compared to domain objects or models ie ``` GetReviewAggregateApi ``` or ``` GetReviewAggregateAjaxHandler ```
+56436130-1613-u	setting a content type header might take care of this json translation for you.
+56436412-1613-u	it may be better to do this json-ld-ifying in the template/javascript rather than here, particularly if this endpoint is ever re-used, so it can be agnostic of data scheme and pass back raw values instead of a fully formatted piece of markup which can be interpreted in other templates for other purposes
+56574706-1613-u	i think you probably want json. vapi will return a response formatted based on what the request is asking for so no need to set it here i think. you'd set that up in the jquery ajax configuration object.  check out https://github.com/vendasta/AA/blob/develop/src/static/script/salestool/AA.ManageLeads.js#L233 for an example of an ajax configuration interfacing with a vapi endpoint that makes this relatively pain free
+56575110-1613-u	We should probably write some unit tests for this
+56575263-1613-nu	you probably want to test that the query you build in this method is scoped to the specified agid and filters out unpublished reviews
+56580249-1613-nu	Right. ``` scaled_stars ``` is the source-agnostic property and is normalized from 0 to 1000. You'd have to translate back to 1-5 once you got a number back though.
+55857776-1606-nu	could you break out the logic here into separate functions ```python if service_type == CS_KEY.FS_VENU:     context = self._setup_foursuqare_context(context) elif service_type == CS_KEY.FB_PAGE:     context = self._setup_facebook_context(context) ``` 
+56174720-1606-u	Quote marks for the name?
+56175252-1606-nu	As pointed out by Shawn, it could be better to use gritter instead of console log
+56176422-1606-nu	I might be too picky here, but ++index is usually used only when necessary. Use index++ if it does the same thing
+56177286-1606-u	There should be no change related to GMB stuffs
+56193372-1606-u	There should be no change related to GMB stuff
+56194092-1606-nu	No need to bind the $data in the click function. use bind only when you need to pass extra params except the current $data. By default, there will be two params passed to the function, the 1st one is the $data and the 2nd one is the event details.
+56194783-1606-nu	A loop here?
+55691375-1603-u	The $ here represents jQuery, because you are using jQuery to get the element, you don't need to do the checks in `isElementVerticallyInView` about whether jquery exists or if the element is a jquery element because it always will be.  I would suggest passing in element[0] here then `isElementVerticallyInView` can simplified to  ``` javascript var rc = element.getBoundingClientRect(); return (rc.top >= 0 && rc.bottom <= (window.innerHeight || document.documentElement.clientHeight)); ```
+55692622-1603-u	Can you be more explicit with the name of this function. I'm not sure what eol is supposed to stand for
+55693378-1603-u	It's going to be difficult to test anything that is using jquery.  I'd suggest logically separating all the stuff that uses it into it's own function so that everything else can be tested easily.   it might actually be better to pass the selector in to `isElementVerticallyInView` and do the jquery work in there  You can then test that it was called with the correct selector. and you can mock it out so it doesn't actually run the jquery part
+55708353-1603-u	The usual convention is to make any variables that are a jquery selector or derivative start with a `$`. So `$element` in this case. Feel free not to do that, but it's helpful to reduce some mental load as you read the code.
+55708543-1603-u	Use `/* */` comments for multi-line comments (should feel familiar to your C days :smile:). I.e.  ``` /*   Comment comment comment */ ```
+55709625-1603-u	You'll want to use some kind of function throttling here, to avoid calling this function thousands of times when it isn't necessary - this function will fire off every time the window is scrolled even a single pixel, so for every pixel it moves it will be called that many times. Here's what we used in SalesTool, you could copy the scrollThrottler function verbatim and just replace the insides with your function:  ```js self.scrollThrottler = function () {     if (!self.scrollTimeout) {         self.scrollTimeout = setTimeout(function () {             self.scrollTimeout = null;             if ($(window).scrollTop() === $(document).height() - $(window).height()) {                 if (self.nextUrl && !self.currentRequest) { // Your specific stuff should go here                     self.fetchSearchResults(true); // Your specific stuff should go here                 } // Your specific stuff should go here             }         }, 60); // A somewhat arbitrary number, but it works pretty well and prevents a ton of load on the browser     } };  $(window).scroll(self.scrollThrottler); // This line can replace what's on line 220 of this file (the one I am commenting on) ```
+55709717-1603-u	Here it is in code, for context: https://github.com/vendasta/ST/blob/develop/src/static/js/manage_accounts.js#L290
+55709882-1603-u	It might make sense to throttle this guy too. We don't even use a resize event for this on the Manage Accounts page
+55364629-1594-u	I'm surprised this `render_response` call doesn't deal with context not being provided :-1:
+55365221-1594-u	Actually, since you're taking `context` as keyword args, it should default to an empty dictionary if you provide nothing. Python should take care of that for you:  ```python def f(**kwargs):   print kwargs  def g(**kwargs):   f(**kwargs)  g()  # should print '{}' ```
+55532349-1589-u	None of these kwargs are optional.  If you make them args instead of kwargs then you don't need the check/raise ValueError stuff.
+55532622-1589-u	this get's the locations, not the connection 
+55534175-1589-u	As this is now in the GoogleMyBusinessSync class it can probably be named something like `getConnectedLocation` as the GMB is already implied
+55535398-1589-nu	Instead of spreading out a bunch of logic to stop gmb stuff when it's disabled, can you pass this into the context and just hide it from the UI?  That's generally the route we go when we put stuff behind a feature flipper.  It's a lot easer to remove later as you aren't changing any of the underlying logic 
+55541317-1589-u	if you make this `self.request.get` instead of `params.get` then you can set self.request as a dictionary in the tests and it's a lot easier to test
+55541391-1589-u	same with the rest of these handlers
+55543130-1589-nu	I don't think the account will ever have a location cursor, as that doesn't show up until our first call to get the locations
+55543257-1589-nu	the account won't have locations to start with anymore as that work would now have to be done in the JS
+55543401-1589-nu	`if (!self.locationCursor())` would work better here
+55543628-1589-nu	You can just `return` here, you don't need to `return true` as that implies that there could be a different return type when it's not actually going to be used for anything
+55544497-1589-nu	the general convention is to do this before the ajax call instead of relying on the ajax beforeSend.  That being said, I'm pretty sure we did it that way because no one knew about this `beforeSend`.  You might have some trouble writing a test for this, but if you can follow the same pattern for testing the success function then it should work.
+55545018-1589-nu	We don't want to leave console.log's in the JS as they won't be helpful to anyone (the end user won't be able to see it). We can use a $.gritter call here which will tell the user that something went wrong 
+55546995-1589-nu	All of the operations in this function deal with the account that is passed in.  Instead of passing the account in to this function, the click event should be handled by the account model.  The only thing that this function can do is set the other accounts to being not selected.  If you select one account then select the next one, we can leave the previous one as selected so it stays open.
+55547332-1589-nu	this doesn't need to be defined if there's nothing in the function
+55549642-1589-nu	We generally want to avoid using id's in styles as much as possible as it's hard to overwrite them.  This isn't worth changing, but just for future reference if you want to style something the default should be using a class
+55753655-1589-nu	Ah, I thought there was collapsing
+55753949-1589-nu	it'd be nice to indicate that somehow, I'm not really sure the best way though
+55532349-1589-nu	None of these kwargs are optional.  If you make them args instead of kwargs then you don't need the check/raise ValueError stuff.
+55534175-1589-nu	As this is now in the GoogleMyBusinessSync class it can probably be named something like `getConnectedLocation` as the GMB is already implied
+55541317-1589-nu	if you make this `self.request.get` instead of `params.get` then you can set self.request as a dictionary in the tests and it's a lot easier to test
+55543401-1589-nu	`if (!self.locationCursor())` would work better here
+55543628-1589-nu	You can just `return` here, you don't need to `return true` as that implies that there could be a different return type when it's not actually going to be used for anything
+55544497-1589-nu	the general convention is to do this before the ajax call instead of relying on the ajax beforeSend.  That being said, I'm pretty sure we did it that way because no one knew about this `beforeSend`.  You might have some trouble writing a test for this, but if you can follow the same pattern for testing the success function then it should work.
+54899849-1588-nu	Not sure how everyone feels about a super get, but maybe this check could be added to BaseReviewWidgetHandler instead of doing it in each.
+54899870-1588-nu	To make GitHub shut up: ![image](https://cloud.githubusercontent.com/assets/8963131/13500008/36108572-e126-11e5-9867-9cd2b27b85f8.png) 
+54905434-1588-nu	It is often a bad idea to do unicode conversions with accounting for encoding errors. You can either: * `except ValueError` * pass kwarg `errors=ignore` or `errors=replace` to work around errors
+54905994-1588-nu	Isn't `_public` an oxy-moron in the Python world? :stuck_out_tongue: 
+54467814-1587-nu	we can't use ``` operation.db.put() ``` here?
+53639591-1581-u	when we disable stuff with pylint, we should be using the message instead of the code. ```python #pylint: disable=line-too-long ``` That being said, you shouldn't be disabling this one.  You'll want to format your code to not have lines too long instead of disabling this check.
+53641542-1580-u	Since you're already adding a fairly long comment here, it might be a good idea to move the above 3 lines + comment into their own function like ``` build_hsmm_redirect_path(...) ```
+53469887-1579-u	We should update the variable ``` stretch_background ``` to ``` full_screen ``` to keep the language consistent.
+52510831-1561-u	size should be `len(review_ids)`
+52361694-1560-nu	whats with ``` ua_mobile_profile == PR_MOBILE_IOS and source_id == GOOGLE_MAPS_SOURCE_ID ``` ? We don't want to link to gmaps if they are on mobile?
+52363949-1560-nu	Did you guys miss the comment right above? [MS-2252](https://vendasta.jira.com/browse/MS-2252) has the details on this, but to sum up, the second clause on the `if` can be removed completely if we have a working links to Google Maps reviews to share the review. (ie. just `if source_listing:`)
+51314541-1557-nu	this should be an ``` a ``` tag now
+50869875-1549-nu	Ah ok `COMPLETE-OK`
+50547021-1548-nu	Does this bug also affect these FAVICONs being served below? If not, why not? They are using `http` exclusively.  `return 'http://' + self.request.host + mapping.get_url()`
+50484155-1546-u	looks like this these context variables are getting set for more pages than just the review page. could you do something like this instead ```python context = self._add_context_args_for_add_review() ... def _add_context_args_for_add_review()     if is add review page <----- idk how to figure this out         context.update({             'contact_name': self.request.GET.get('name', ''),             'contact_email': urllib.quote(self.request.GET.get('email', '')),             'contact_id': self.request.GET.get('id', '')         })     return context ``` which can then be tested a lot easier  BONUS: this fulfills the Tell Don't Ask principle http://martinfowler.com/bliki/TellDontAsk.html
+50484688-1546-u	`formdata.set_value('reviewerName', self.context_args.get('name', ''))` would work instead, then you don't need the 2 if statements.  For sure the default value of empty string will work, but it might also work with a default of `None`, in which case you don't need to specify a default 
+49869771-1541-u	By default `get()` returns `None` so you can simplify these to `args.get('msid')` however I'm not sure I agree with these fields being optional (as mentioned above).
+49875850-1541-u	Should be `self.review.agid`
+49876275-1541-u	Ya when add the review you get it back and it sets `self.review = review` so, at this point, you know you'll have it.
+49878022-1541-nu	you could also do this by saying  ``` return set_review_shared(self.agid, self.rid) or self.abort(400) ``` although i find that kinda weird. if you want to return a 400 if something goes wrong in core, it's clearer to catch the exception here and abort in the exception handler rather than catch it in the underlying layer, return None, and then have a special meaning for a None value in this layer
+49880308-1541-nu	ya what im suggesting is  ``` try:   return set_review_shared(self.agid, self.rid) except CoreApiException as e:   logging.warning(e)   return self.abort(400) ```  and then the core api wrapper method going back to being 2 lines
+49511401-1531-nu	I was just looking through the `msid_selector` code (which handles `redirect_hostslug`) and, yes, I think you are correct, this should be fine. Especially if you grabbed it from the code that generates the "View Location Page" link.
+49158324-1529-nu	@sgryschuk-va @tbathgate-va @bjohnson-va  so... sendwithus completely obscures what the links actually are (thye get turned into giant unreadable things). as long as the user doesn't see a microsite load up on microsite-prod.appspot.com (ie non whitelabelled domain) then from their perspective theres no difference between the WL domain and our domain unless they are exceptionally tech savvy for a random spam victim.  I think we could just give them a vanilla url that does the same thing and cut out all of this communication between CS and MS when CS goes to send the email.  ``` _get_review_deep_link ``` could just as easily exist on the vobject
+49368290-1529-u	agreed, then just change the valid of self.review['originalStars'] in the test. just lots of lines to look at
+49368735-1529-u	can you just use ``` uri_for ``` ?
+49377610-1529-nu	generally our urls should be lowercase with dashes between words like microsite/send-request-share-review-email  if you found 'MicroSite' somewhere in MS that's old school
+49378206-1529-nu	you can get the reviews and ``` get_enabled_listing_sources ``` asynchronously. if you havent seen https://cloud.google.com/appengine/docs/python/ndb/async#tasklets id check it out. a tasklet decorator can turn any python function into a (pseudo)asynchronous method. we can refactor it together if you want
+49380685-1529-nu	id look at initializing these mocks in your ``` setUp ```. If a mock is needed for every or almost every test, then might as well store it on the testCase instance in setUp. Allows you to get rid of all the nasty decorators and arguments into test functions.
+49381035-1529-nu	if you'd like to put this mock into the setUp, you could change this test case to inherit from VTestCase, which is a thin wrapper about unittest.TestCase with some convenient assertions and (more importantly) the easy ```mock_function_in_setup ``` call (or whatever its called now) which lets you put this on an instance attribute easily
+49381258-1529-nu	same comment here about patch decorators vs setUp and VTestCase
+48059473-1518-nu	Minor, but the page, msid, pid, etc. are already added via `MicrositeGeneralView.get` and `MicrositeView.render_response` methods.
+48059765-1518-nu	I would really like to see this file completely deleted and for reviews to use existing page logic. Also instead of overriding the `page` property in these handlers you could potentially just insert that logic into `MicrositeGeneralView.page` but that might get messy...
+45124925-1496-nu	I don't understand what the issue is.  *Renee Elder* Product Owner *VendAsta Technologies Inc.* relder@vendasta.com| www.vendasta.com  On Tue, Nov 17, 2015 at 2:56 PM, Sunny Sharma <notifications@github.com> wrote:  > In src/templates/microsites/html/templates/ReviewDisplay.html > <https://github.com/vendasta/MS/pull/1496#discussion_r45119237>: > > > @@ -57,12 +53,12 @@ > >                          <span class="reviewer-name" data-bind="text: reviewer_name" itemprop="name"></span> > >                      </div> > >                  </div> > > -                <a class="v-feed-item-title" data-bind="text: title, attr: {href: $root.linkToReview(review_id) }" itemprop="name"></a> > > +                <a class="v-feed-item-title" data-bind="text: title, attr: {href: url }" itemprop="name"></a> > > like so > [image: baltimore_plumbers__hvac___heating___cooling_service] > <https://cloud.githubusercontent.com/assets/5394747/11224592/c00bf400-8d43-11e5-9e42-0d0667e07da5.png> > > — > Reply to this email directly or view it on GitHub > <https://github.com/vendasta/MS/pull/1496/files#r45119237>. > 
+45126489-1496-nu	That doesn't seem right.  It shouldn't put them into a place where they get "stuck".  If you want, we can do a hangout to go over how it should work.   *Renee Elder* Product Owner *VendAsta Technologies Inc.* relder@vendasta.com| www.vendasta.com  On Tue, Nov 17, 2015 at 3:41 PM, Dale Birtch <notifications@github.com> wrote:  > In src/templates/microsites/html/templates/ReviewDisplay.html > <https://github.com/vendasta/MS/pull/1496#discussion_r45125468>: > > > @@ -57,12 +53,12 @@ > >                          <span class="reviewer-name" data-bind="text: reviewer_name" itemprop="name"></span> > >                      </div> > >                  </div> > > -                <a class="v-feed-item-title" data-bind="text: title, attr: {href: $root.linkToReview(review_id) }" itemprop="name"></a> > > +                <a class="v-feed-item-title" data-bind="text: title, attr: {href: url }" itemprop="name"></a> > > The reviews behaviour is inconsistent, only clickable if an optional field > (review title) is provided. This loads the landing page in the widget space > - including redundant branding, phone button and view map (not present in > the widget when first loaded, and should be present on other spots of the > page already) further this gets the user "stuck" there is no back or > ability to return to the list of reviews that you came from. > > — > Reply to this email directly or view it on GitHub > <https://github.com/vendasta/MS/pull/1496/files#r45125468>. > 
+43302235-1471-nu	i think ```split_names = reviewer_name.split(' ')``` has the same effect
+43302570-1471-nu	not huge fan of append None, you can do  ``` first_name = split_names[0].capitalize() if len(split_names) > 1:    last_initial = plit_names[1][0].capitalize() else:   last_initial = ''   ```
+43303181-1471-nu	the correct way is to ```counts = defaultdict(int, {...})```
+43303522-1471-nu	should it be ```if num_comments > 0```
+42636959-1444-u	```document.location.toString()``` will do whole thing for you, so you can just   ```document.location.toString() + '?agid={{ agid }}'```
+42263164-1440-nu	How expensive is this vconfig lookup? Is it an NDB lookup by key? An API call? Using a memcache?  I am a little worried about adding this in the base `render_response` function because then it will be called for every single page, when we only really need it on a single page. Although, I will admit that it seems like the type of generic field we should put on every context.
+42061536-1431-nu	I don't think env name is enough here, since these buckets are globally unique. `batch-files-microsites-prod` maybe instead
+41443249-1428-u	Usually I see these field names being stored as constants of the form class as to avoid duplication and accidental mis-matching errors.  e.g. ``` class ReviewCommentForm(VFormHandler):     COMMENTER_NAME = 'commenterName' ```  You can then use that constant here and above in the `FIELDS = ` declaration.
+40992586-1421-nu	is the positive/negative review message normally a list in the dict returned by ``` get_review_generation_dict ``` ?
+40992993-1421-u	this setUp is massive and expensive. can you get away with creating less stuff? can you get away with mocking the calls that necessitate these entities instead of actually making them? 
+41026120-1421-u	There was a couple reasons that this was done this way originally. 1. So that the review page could still be reached from RepInt Generate Reviews even if they make a custom name for the page. 2. It's possible for the review page to still be reachable even if the Microsite hasn't explicitly added a review page/tab, and a temporary tab will show up in the nav bar so that it doesn't look weird. (maybe not needed anymore since we mapreduced over all microsites and added review pages).
+41026794-1421-u	The `msid` and `microsite` (which you can get the name from) are added to the context in the `render_response` method in the parent handler so not necessary here.
+41050923-1421-u	Pretty sure you can just use 'title' from the common context in `app.views.microsites.MicrositeView#get_common_context`
+40923206-1419-u	this could be written as ``` return _get_rgba_from_standard_hex(naked_hex_color_string) or _get_rgba_from_short_hex(naked_hex_color_string) ```
+40927250-1419-u	``` rgb_color_string ``` 
+40933329-1419-u	something like ``` data-bind="attr: { href: function(){ return ($data.disabled()) ? '#' : {{listing.url}} } ``` may work. either way its not too important at this point
+40344334-1408-nu	personally i think it's weird to change the instance variable inside the test instead of using ``` % (self.pid, self.agid) ``` in string substitution just be brazen about shoving something out of the norm in there ``` % (self.pid, 'AG-FAILS') ```
+38543731-1387-u	Maybe add a comment to make it explicit why we are using !important. something like ```css Done to ensure that the random embedded html pasted by a user has an appropriate width ```
+36522464-1376-nu	`customer_identifier` can also be considered as non-essential as we have `pmsid` which is used as microsite's customer_identifier.
+36359606-1371-nu	Are there other uses for the schema types besides using the schema.org url? If not, then maybe we could construct the urls as part of the `get_schema_types_by_taxonomy_ids` call since we'll need to do it every time anyways.
+35369451-1351-u	i know this was here originally but ``` self.open24 == 1 ``` ?? We have values like that in datastore? 
+35371644-1351-u	I believe if the holiday flag is set the dayOfWeek should be set to [u'PublicHolidays']
+35372136-1351-nu	Open24 is detected by both the opens and closes being 00:00, as such this flag can be set on a day by day basis. Unless the entire week becoming open 24 hours was how the old MS HoO worked?
+35431914-1351-u	Shouldn't need the first `self.open24 and` either
+35010614-1347-u	I think what Dustin meant by default arg here was  `site_kwargs.pop(Microsite.geo._name, None)` especially since we don't care about the popped value anyway
+34911597-1345-u	Looks like these should be `get`s
+34607774-1321-nu	`photo clicks` ? What is `yellow ad`?
+34609008-1321-nu	`November 2011` haha
+33466775-1309-nu	Here, I'm thinking what if the account group is not synced. We know pubsub could sometime get delayed and in that case we'll have bug in validation and other places of the endpoints that uses this Mixin. May be we could first get from the `AccountGroupModel` and then if not there in the datastore get it via VBC api call?
+33167052-1307-nu	self.validate(args) raises the ValidationError and other errors should come from ``` self.add(args_with_spid) ```, so these could be separate blocks.
+32942018-1297-u	Should do `{{ super() }}` here so that it takes `google_analytics.html` content from global global.html
+32023075-1286-nu	Might as well do this for `LogoutHandler`.
+31767564-1275-nu	I think `fn` is supposed to be equal to `org`?
+31767850-1275-nu	Doesn't this need to be contained within the `vcard` class to be recognized?
+31345976-1271-nu	Shouldn't this be `23:59:59` otherwise we'll lose 1st day of each month in the billing query
+31088112-1261-u	can clean this up even more,  ```return key.get()```  instead of these two lines.
+31089143-1259-u	Can we rename that to `VBC_API_KEY`
+30737953-1243-u	We should probably use `account_group_id` instead of `agid`.
+30728707-1242-u	If you don't need the mock in the test, you have the option of defining what the mock should be. When you do define it like this using the `new` kwarg, it doesn't get passed to the test. Something like this: ```py mock.patch('app.models.microsite.get_account_group_vobject', new=mock.Mock(return_value=None)) def test_migrate_from_legacy_raises_if_account_group_not_found(self): ``` Personally I'm torn on which is more readable, but sometimes it's useful (like if you are mocking many things and you never actually use the mocks), or if the same unused mock is being passed to every test (though there is alternatives to that too).
+30730230-1242-u	`from vtest import mock`
+30739447-1242-u	```raise AccountGroupNotFoundException('The account group %s for the account %s does not exist.' % (self.account_group_id, self.account_id)) ```
+30737246-1241-nu	Why do we use `qa` vs `_gaq` here? Might warrant some documentation
+30737650-1241-nu	_gaq is old school... ga is the new way On May 20, 2015 1:05 PM, "Jason Prokop" <notifications@github.com> wrote:  > In src/static/js/MS.AddReview.js > <https://github.com/vendasta/MS/pull/1241#discussion_r30737246>: > > > @@ -39,5 +39,12 @@ var AddReviewViewModel = Class.extend({ > >                  $.gritter.success('Review copied to clipboard'); > >              }); > >          }; > > + > > +        self.trackShare = function(listing) { > > +            if (typeof(ga) === 'function') { > > +                ga('send', 'event', msid, 'ReviewShare', listing); > > Why do we use qa vs _gaq here? Might warrant some documentation > > — > Reply to this email directly or view it on GitHub > <https://github.com/vendasta/MS/pull/1241/files#r30737246>. > 
+30737821-1241-nu	https://developers.google.com/analytics/devguides/collection/upgrade/reference/gajs-analyticsjs On May 20, 2015 1:09 PM, "Jeremy Rans" <jrans@vendasta.com> wrote:  > _gaq is old school... ga is the new way > On May 20, 2015 1:05 PM, "Jason Prokop" <notifications@github.com> wrote: > >> In src/static/js/MS.AddReview.js >> <https://github.com/vendasta/MS/pull/1241#discussion_r30737246>: >> >> > @@ -39,5 +39,12 @@ var AddReviewViewModel = Class.extend({ >> >                  $.gritter.success('Review copied to clipboard'); >> >              }); >> >          }; >> > + >> > +        self.trackShare = function(listing) { >> > +            if (typeof(ga) === 'function') { >> > +                ga('send', 'event', msid, 'ReviewShare', listing); >> >> Why do we use qa vs _gaq here? Might warrant some documentation >> >> — >> Reply to this email directly or view it on GitHub >> <https://github.com/vendasta/MS/pull/1241/files#r30737246>. >> > 
+30739589-1241-nu	@starulli-va I think so. Using analytics id from `settings.GOOGLE_ANALYTICS_TRACKING_CODE` all the analytics data will be in one analaytics id and it will be easy to find the data otherwise the data will be scattered all over the partner's google analytics id.
+30807750-1240-u	You need to change this to: ```javascript !self.showClipboardLink() ``` otherwise you're testing that the observable object doesn't exist.
+30807898-1240-u	Might be nice to extract the `$("#comments").val()` out since it's also used in the if statement above
+30437716-1231-u	Heads up, in python you can just do: ```python phone_numbers = kwargs[MICROSITE_KEYS.PHONE_WORK] cleaned_phone_numbers = [phone_number_digits(number) for number in phone_numbers] kwargs[MICROSITE_KEYS.PHONE_WORK] = cleaned_phone_numbers ``` Typically if you're ever using an index when you're iterating, there's probably a better way :smile:   Also, then you can probably remove that mapping comment on 155.
+30437984-1231-nu	If this is the only thing in the new conditional block, I'd probably throw them both into one condition: ```python if MICROSITE_KEYS.PHONE_WORK in kwargs and MICROSITE_KEYS.PHONE_CALL_TRACKING in kwargs: ```
+30439231-1231-u	Personal recommendation for readability. ```python self.phone_work = kwargs.get(MICROSITE_KEYS.PHONE_WORK, []) self.phone = self.phone_work[0] if self.phone_work else None ```
+30439412-1231-u	Instead of the helper function, I'd probably just do it inline since it's simple. ```python phone = ndb.ComputerProperty(lamda self: self.phone_work[0] if self.phone_work else None ```
+30440042-1231-u	Style: ```python for ms_number, work_number in zip(ms.phone_work, work_numbers):     self.assertEquals(ms_number, work_number)     self.assertEquals(phone_number_digits(ms_number), phone_number_digits(work_number)) ```
+30443412-1231-u	If you want to get really crazy you could do this in a single line: ```python kwargs[MICROSITE_KEYS.PHONE_WORK] = [phone_number_digits(number) for number in kwargs.get(MICROSITE_KEYS.PHONE_WORK, [])] ```
+30443698-1231-nu	That being said, I don't understand why you care about the presence of ```MICROSITE_KEYS.PHONE_WORK``` at all...  Once again this method could be simplified to a single line: ```python kwargs[MICROSITE_KEYS.PHONE_CALL_TRACKING] = [phone_number_digits(v) for v in kwargs.get(MICROSITE_KEYS.PHONE_CALL_TRACKING, [])] ```
+30444292-1231-u	I mostly agree with @cpenner-va. If you tweak it just slightly you won't need the conditional in the 2nd line at all though. ```python self.phone_work = kwargs.get(MICROSITE_KEYS.PHONE_WORK) or [] self.phone = self.phone_work[0] ``` Is basically equivalent.
+30613001-1231-u	This should be ```kwargs = _sync_phone_kwargs(**kwargs)```.

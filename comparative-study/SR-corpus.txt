@@ -1,0 +1,291 @@
+63538321-2862-u	these aren't used
+63542615-2862-u	Not sure I love this class name, it's more descriptive of what MS is doing. 
+63555390-2862-u	Can we add some details about what location failed? I always try to give errors/exceptions some specifics for the poor sucker who is stuck debugging this when it breaks.
+63555574-2862-u	That said, I find it super weird we're catching a 500 from core here. Why do we assume core is going to 500? 
+63594567-2862-u	Can't we use `this` for storing stuff across `beforeEach`?
+63595346-2862-nu	It'll help a lot for conversions away from Jinja templating data onto the page if we keep it separate from the javascript code. This case is pretty simple and contained so it's pretty OK like this, though.
+63595819-2862-u	Maybe `window.` to be explicit what this is for
+63284856-2857-u	theres no yielding going on in this function so it's not going to actually run in parallel with anything else. we call tasklets an 'asynchronous' technique, but really they are just functions running in an event loop on a single thread ala javascript. The yield keyword is how the mechanism that controls the ndb event loop holding these tasklets knows to go to the next tasklet and let this one sit for a while . furthermore, yielding on an expensive data processing loop for example won't actually help, so it's really only applicable to RPCs. It's more like a nice way to abstract and organize the management of multiple ndb async operations than it is like a general approach to parallel processing.
+63361850-2857-nu	This is good info ? , might be good for a blog post ? 
+63363469-2857-nu	You could always just pass this in to the calls to `_fetch_histogram_stats_async`
+63363897-2857-nu	I am impressed this test passed before. 
+63364363-2857-nu	when calling a function on a mock it always succeeds and returns itself. So this wouldn't have actually 'asserted' anything.
+63207085-2856-nu	any reason for this to not just be in global.html ?
+63208483-2856-nu	SM and MS have this at the bottom of all the pages, would that not work here?  <img width="987" alt="screen shot 2016-05-13 at 6 02 55 pm" src="https://cloud.githubusercontent.com/assets/6391814/15254010/f9076f64-1934-11e6-8f6e-a3cd9b610d28.png"> 
+62860153-2847-nu	This reads awkwardly. Maybe we could change the logic to   if debug_flag or is_local_or_test
+62860694-2847-u	Add a newline to the end of file.
+62860771-2847-u	Do we write tests for our JS?
+62722407-2844-nu	Is there any way to use the query from `ReviewEmailEventsStatistics`, I'm not really sure
+62733597-2844-u	Order of imports. Move this up to be with datetime
+62699217-2840-u	Just being picky here:-) If either firstName or lastName is missing, the space for connecting them is not necessary.
+62541026-2837-u	Hmm, you should probably roll this back I'm guessing. Unless it was already here.
+62389146-2836-u	You sure it's not already defined as PRIMARY_COLOR or something somewhere
+62358419-2828-u	you shouldn't need to pass this in if they are all the same.  It should just use that format
+62358673-2828-nu	the data for this and TopReviews are the same, is it possible to refactor this to use the same function as TopReviews. then we know for sure they will always be the exact same
+62352534-2827-u	I think we need the # of delivered events here. Not 1 for all events to that email. That'd be the same as counting the emails wouldn't it
+62352680-2827-u	{u'key': u'delivered', u'doc_count': 28} would be 28 delivered not just 1
+62104999-2819-u	I think these strings are already defined
+62105033-2819-nu	I removed `graphsInitializedWithData ` and replace it with `allDataAquired`, we'll have to watch that in the mregeds 
+62105212-2819-u	does step 1 work here with 30 days? Seems like that would be super crowded
+62105418-2819-u	does step 1 work here with 30 days? Seems like that would be super crowded
+62036961-2809-u	there's no reason to do an `execute_async().get_result()` here, might as well just call `execute` Also, this should be `overall_stats` as it's not a future
+62037148-2809-u	Because this is a blocking query it can't run in parallel with the other 3 queries. You could either make it async (which would take work to break out the formatting and whatnot, or you can put it after the `daily_stats_future` and it will run in parallel with the other 3 queries
+62071902-2809-u	this name could be a class constant.
+62072587-2809-nu	It's probably worth putting this explanation in the docstring
+62073070-2809-nu	This line made me think "there must be a better way to round a float to 1 decimal in python". But apparently there isn't .... 
+62073364-2809-u	could you note that this defaults to querying all time if you leave past years and months at 0?
+62073667-2809-u	if you set `max_data_points=None` here it makes your call with the quarterly aggregation look clearer.
+62073780-2809-u	I'd recommend using a keyword style argument for `max_data_points`
+61972067-2806-nu	We might not need this computed property cause summing up all the data seems not to make sense. BTW, I have calculate total in python domain layer.
+61972094-2806-nu	The same comment above.
+62038489-2806-nu	We might end up having an issue here. The Open Rate can be calcualted with `(sent to unique emails)/(opened by unique emails)` as the user as no way of calculating that themselves. But your PR has the total being calculated as `sent to unique emails` which would be different than the graph. And it's possible for the SMB to see the full graph and count the total themselves. I think it'd be better to sum all the data here as it'll be consistent with the graph
+62038809-2806-nu	does this effect other SR graphs? ~~looks like you're not using Srep.graph for the graphs here, not sure why these changes were needed~~ found the area graph
+62039605-2806-nu	You can probably see how inheritance would help a lot with these classes. That's what the Class.extend stuff is. inheritance.js is the lib we used for this. We're getting away from that now as ES2016 supports inheritance
+62039729-2806-u	should be `No Historical Stats`
+62039893-2806-u	This should be in getEmailStats
+62044714-2806-nu	Cool, wasn't sure
+62052370-2806-u	Right, we'd show an empty graph
+61956793-2804-nu	The date comes from the csv
+61945887-2802-u	Could you pull this stuff out and test it.  This complete function is pretty large now
+61939690-2799-u	Instead of all these `if` statements could you just: ```python for app in ACCOUNT_LEVEL_APPS:     if self.partner.has_app_installed(app):         redirect_path = '/{}'.format(app.slug) ``` You could probably even ```python redirect_path = next('/{}'.format(app.slug) for app in ACCOUNT_LEVEL_APPS if self.partner_has_app_installed(app), None) ``` ?
+61950852-2799-u	Uh...can you take this out?
+61951067-2799-nu	Not sure if we still need this import.  Probably break pylint
+61911608-2798-u	Magic number.
+61911690-2798-u	![shia-labeouf-magic-gif](https://cloud.githubusercontent.com/assets/2190961/14990423/bd39e660-1119-11e6-8f19-c3a6db401412.gif) 
+61912562-2798-u	sorry, what's the different between total and reviewCount?
+61913427-2798-u	Maybe a clearer name?
+61915031-2798-u	no need to have the options param here as we aren't passing in options
+61899268-2796-nu	Is this Ajax handler just for getting reviews requested stats? If we want to use this ajax handler to get all email-related stats (reviews requested and open rate), I think we should format data as follows: ``` overall_stats = {             'quarterly': {‘reviews_requested’: {'intervals': [], 'labels': []},  	    		       ‘open_rate’: {'intervals': [], 'labels': []}},             'monthly': ...,             'daily': ... } ``` or ``` overall_stats = {             'quarterly': {                 'label': [],                 'interval': {                     'reviews_requested': [],                     'open_rate': []                  }             },             'monthly': ...,             'daily': ... } ```
+61797709-2792-nu	We'll make a note to change this
+61797338-2791-u	shouldn't the key value be a string? 
+61797489-2791-u	this variable name is not the same as what you passing below. lets keep them same for avoiding confusion.
+61804410-2791-u	Very minor thing, account_deletion_date is a kwarg, should pass it through as one as well.
+61807774-2791-u	Minor: You don't need to specify None here, that's what get will default to.
+61744850-2787-u	can you update the docstring as well? 
+61618243-2784-u	do you have to add else here as well? https://github.com/vendasta/SR/pull/2784/files#diff-7bcedd3f3489ae22fa90b8c7f96519c1R353 
+61745738-2783-nu	maybe we should remove this comment now as it's out-of-date
+61579167-2781-u	you can just do `opacity` and `tansition` our sass compiler should add the other rules
+61493053-2779-u	Is there any point to converting this to a tasklet if we're blocking on these async gets? That's what yield does right, it suspends everything and waits for that value?
+61493907-2779-u	nvm. I think I get it now.
+61509818-2779-u	should `set_multi_async` too
+61509854-2779-u	yield get_async
+61582458-2779-u	The yielding is more about forcing the future to resolve than the fact that it returns something. But you're partially right, you don't need to **yield** this since the tasklet doesn't need to block on it, but you do need to force that future to resolve at some point... whether that's through a `yield`, call to `get_result` (outside of the tasklet), or an `@ndb.toplevel` decorator somewhere higher in the chain.
+61593340-2778-nu	These functions should probably just accept an account group model. The handler already has access through `hander.account.account_group`
+61594362-2778-nu	Does this fix that stupid graph margin problem?
+61428866-2776-u	You're switching on aggregation name here, but if the aggregation name was always the same and you passed in the max number of stats then that would simplify this
+61343119-2775-nu	are these names backwards? seems to me the "internal" one should be the non-deprecated one
+61343162-2775-nu	wait... wait... I read that wrong... 
+61335850-2774-u	We looked into this for PRD-94. Apparently if you set the min and max to now, it will give you the all time results, with the earliest data point going to the first review.
+61336305-2774-u	Does it mean 'all time'?
+61336474-2774-u	'one_month_ago' should be 'ten_years_ago'
+61267036-2772-nu	why did you cut the spinner?
+61267189-2772-u	Sta**t**istics?
+61267847-2772-nu	Oh, I see, the data is available on page load. What's funny is that it still takes about the same amount of time for the highchart animation (locally) as the ajax call for the Total Reviews graph
+61269024-2772-u	we should probably remove the `Arial sans-serif` bit
+61269064-2772-u	*Statistics
+61269240-2772-u	shouldn't this file be named `statistics_test`?
+61293219-2772-nu	I think it's actually a combo of the time it takes to build the chart and animate it. It might always look kinda funny.
+60999472-2771-u	Do we have some better marketing copy than "Set up Review Widget"? I don't think anyone will know what that means as a call to action.
+60999670-2771-nu	Does this work? Shouldn't it be ```{{ super() }}```. Not saying it's wrong, but I've never seen it like this before.
+61001047-2771-u	Is it a comment? Can we remove it?
+60940922-2767-u	settings.ADPG_PID is in this list twice now?
+60771612-2757-u	Why push each result? You can just build the list the way you want it.
+60771931-2757-u	These colours are used in a couple places in SR. Is there a way to define some constants?
+60775023-2757-nu	again, is there a reason to push these objects into the list rather than just construct the list the way you want it? I'm no JS pro, so maybe there is?
+60795142-2757-nu	That's cool. Just curious, I thought you'd have a reason.
+60466042-2755-nu	![image](https://cloud.githubusercontent.com/assets/8963131/14686516/44ced578-06f6-11e6-9415-93e9d2dc8502.png) ;)
+60466143-2755-nu	inline styles?
+59634293-2740-nu	maybe rename `path` to `actionLink`
+59455346-2732-nu	Since vForm inherits vApi, have you tried using `validate_arg_message` instead of `pre_process_hook` for validation?
+59456704-2732-nu	This is fine with me too.
+59410258-2731-u	The knockout controller should really have the company name passed in to it then these should be coming from the JS.  We want to keep the jinja templating and knockout templating as separate as possible 
+59410309-2731-u	this should be passed into the js controller as well
+59411280-2731-u	This should be refactored out into a superclass instead of duplicating it 2 more times
+59411508-2731-nu	that is my goal in life
+59416229-2731-u	Yes, you might have to make an intermediary super class
+59441491-2731-u	If it would be grosser to pass it in to the js then I'd just leave it like this.
+59407387-2730-nu	I guess you didn't make this change ... but isn't the pythonically prefered way to cast it as str?
+59407529-2730-nu	pretty slick
+59395576-2728-nu	loooove these naming conventions /sarcasm
+59296394-2727-nu	Seems that these things are unnecessary or could use the config values from above?
+59296610-2727-nu	:no_good: 
+59438068-2727-nu	Nice.
+58944060-2725-nu	Does `visible: !postedByOwner` mean they can't delete their own comments? Don't we want to allow that?
+58944406-2725-nu	It adds a lot of complexity with regards to the responded by owner stuff.  We aren't supporting it right now, I'm sure if people ask for it, that could be changed in the future.
+58945551-2725-nu	Also we decided that, unless they really fuck up, they can just edit their comment. Seems like that would be the better solution anyway.
+58946033-2725-u	This feels kind of overly verbose.
+58946084-2725-u	Is this just going to dump a weird message from CS?
+58946786-2725-nu	Out of curiosity what makes it more complicated? Is it concierge? Just wondering because it may not happen much, but I had one issue on black ops to delete a comment because the owner posted "I'm so sorry for your bad experience" on the wrong review, which was a 5 star good review haha
+58947921-2725-u	I agree, I think the fact that the ui reflects that the comment isn't there anymore should be indication enough that the delete succeeded
+58949189-2725-nu	you're required review here, but I don't think it's ever used
+58949549-2725-nu	nm, I found it
+58932560-2724-u	Is there a reason to use this kind of property caching if we only use it once? (I think I only see it used once)
+58932939-2724-u	`forme` hehe
+58933092-2724-u	I'd combine these into 1 line; `review_id` caused me more confusion than clarity.
+58933117-2724-u	Is it worth changing the name of this helper method?
+58934739-2724-u	Should we use @cached_property if we want to cache it?
+58937098-2724-u	Or just rename this variable to something more specific?
+58713398-2721-u	Just remember there is a constant key named REFERRER_URL defined in vauth. However, what we defined here has nothing to do with vauth, so it is probably fine to just use a string here.
+58625140-2719-u	Would the actual API call return: ``` {'goodListings': [     {'ssid': 'SSID-1'},     {'ssid': 'SSID-2'} ]} ``` Rather than multiple goodListings?
+58626379-2719-u	Ahh I got ya, so it'll return the good listings for each source.
+58432018-2715-nu	this technically works cause it will kill the tests if there's an exception, but could you change it to be an assert ``` try     send_activity({}) except Exception:     self.fail() ``` just so it's written more like a test
+58432070-2715-nu	and can you change it to 4xx err instead of 400, because technically this was 404 
+58389126-2713-u	This sourceId is definitely declared somewhere else already. Import it from app.keys.GLOBAL_SOURCE
+58392223-2713-u	I'm sure it is defined somewwhere, but I think you just gave the reference in CS, not SR.
+58392450-2713-u	`LOCATION_PAGE_SOURCE` is defined in `lib/coresdk/profile_group.py`
+58392542-2713-u	Haha. Yep.
+58393977-2713-nu	This should probably be done in app/domain/repcore/sources.py in `get_all_sources_as_dict` I believe you can strip it out in that function just like it strips out the listing distribution sources
+58396549-2713-nu	Please don't blindly make that change. That function is used to do stuff with reviews. And we still want Location Page Reviews. 
+58399002-2713-nu	ok, sounds good to me
+57921984-2708-u	Was this also a problem if the account was expired? Does this check still return an account after it's expired?
+57234224-2702-nu	That's pretty slick.
+57204458-2698-nu	Why is all of this in the PR? Was this intentional?
+57185938-2697-u	`is_popup = self.request.cookies.get('isPopup') == 'true'`
+57030926-2695-nu	I thought this was being used, that's why I left it
+56997764-2694-nu	this is a weird change, what happened here?
+56997980-2694-nu	NM figured it out
+57007258-2692-u	You should never use `{}` (or any other mutable) as the default value for a keyword argument. You should read this: https://pythonconquerstheuniverse.wordpress.com/category/python-gotchas/
+57007526-2692-u	It's probably not a huge deal for test code, but I'd rather not see it in the codebase at all
+56991890-2688-u	I would like to see this try-except block refactored into a function, which should return a `RequestStatus` object. Something like `def perform_update` should get the job done. After that, this block will look like:  ``` if not keyword:     status = RequestStatus(identifier=None, operation=statusOperation, successful=False, data={}, message=CREATE_ERROR_EMPTY_KEYWORD) else:     status = perform_update(..) . . if status.successful: ```
+56995631-2688-u	The purpose of which is to reduce heavy nesting and improve readability.
+57009303-2688-u	Just use `keywords` here, no need to get fancy :)
+57009610-2688-u	I'd really like to encourage you to use the `success` attribute of the RequestStatus object. It makes sense to have a flag for the operation, but in this case, the outcome of the operation essentially already is a flag.
+57009683-2688-u	Docstring for this guy
+57386542-2688-u	move this down to the `else` block
+57386583-2688-u	`if not keywords`
+57387823-2688-nu	Any reason why you're popping all over the place?
+56527482-2674-nu	It might be nice to link to the source here: `<a href="{source_url}">{source_name}</a>` Here and above for the "Accurate listing" message too. I assume you have access to that information in the API call to repcore.
+56527669-2674-nu	Nice refactors!
+56528158-2674-u	Swallowing exceptions makes me sad. I always prefer to at least add a `logging.warning` message. And it is often a good idea to include the stack trace with `exc_info=True`.
+56528543-2674-nu	It seems a little odd to use the `handle-pubsub` queue here considering this is coming from a  direct API call, not pubsub. But I also understand why you did it this way; the other notification activity probably already use this queue. :disappointed: 
+56529195-2674-u	I think it is a bad idea to mock private functions of a class; it makes it much harder to refactor.  I think it would be better to change this to mock out the entire call to: `app.domain.repcore.sources.get_source_by_id()` and then the dependency of this class would be mush clearer in the tests.  Currently I could change your `_get_source_name()` function to return hardcoded `Yelp` and all your tests would still pass. I am not suggesting testing the private function, I would like to see the fact that the private function exists be hidden from the tests. This will enable much easier refactor of code in the future.
+56530985-2674-u	This will get run every time the file is imported, but only needs to run once per instance.
+56531176-2674-nu	:thumbsup: Glad we'll have more consistency between the different activities.
+56532002-2674-nu	Since we can already click on the icon and we have a 'view' link that the user can click I'm not sure if we'd want a third spot for them to click.  I wonder if having three places to click or taking away one of the other places would be better UX. 
+56532868-2674-u	We just need to make sure that this algorithm is registered.  If it is already registered than this will throw an exception.  Is it really valuable log a warning in this case?
+56533194-2674-nu	Good points. We can think about this for a future iteration.
+56533324-2674-u	I think there should be a space between `partner_mock.return_value = secure_partner` and `link = activity.build_partner_link('ABC', '/visibility/')` and another space between `link = activity.build_partner_link('ABC', '/visibility/')` and `self.assertEqual('https://abc.steprep.com/visibility/', link)`.  It makes looking at the three parts of the test much easier.  Same goes with the other tests. 
+56533502-2674-u	Catching `ValueError` seemed too generic to swallow and assume it is ALWAYS caused by it already being registered. What if the lib is missing, does it also raise a `ValueError`?  But if we only want it run once per instance, it belongs in a warmup handler, not a normal code file.
+56397622-2672-u	Can we remove the extra newline above match = false?
+56398245-2672-u	Can we change the field in this comprehension into is_match instead?  Also, can we change match to is_match? Just for clarity. 
+56398758-2672-nu	why is {'None': True} necessary? Seems a bit odd to me. 
+56399436-2672-nu	Fair enough
+56349536-2671-u	Super minor.  But I'd prefer this condition be ``` == "LOCAL ``` so it's easier to immediately understand without having to double check the ``` != ```
+56249980-2668-u	you could probably use the same pattern (previous_stat) here, right?
+56086590-2666-u	is all of this unit tested? it would be nice to see all the cases in plain unit tests if they dont exist, and a new case for pdqs.mobi
+56087206-2666-u	also, if prod has to use pdqs.mobi but we cant do that for the other envs, does it even matter what we do on other envs, can we just use microsite-env.appspot.com?   i say that because this url mutilation we do on other products on our own platform haunts me at night
+56161440-2665-nu	dang, I thought this was fartbasic.css
+56039779-2664-u	you should be able to accomplish this with the _get_exclusive_properties method in vapi? or is that not returning the right error message? 
+56040065-2664-u	again, maybe get_exclusive_proprties can do this for you. Also the docstring for this process method may or may not be accurate. Kind of looks like not accurate at all lol
+56045873-2664-u	Yeah! Let's use that thing!  So, `_get_exclusive_properties` only works if you're using the vapi Properties. If you're defining lists of args like you are in this handler, you can do the following: ``` REQUIRED_ARGS = [   ...   (API_KEY.ACCOUNT_SRID, API_KEY.CUSTOMER_IDENTIFIER)   ... ] ```  This will require one of the two arguments
+56191426-2663-u	instead of setting ```current_stat``` you can enumerate ```stats``` in your loop.  EX. ``` for index, stat in enumerate(stats):   if not (stat and stat.value == 0) or index == 0:     continue      stat.value = data[index - 1] if data[index - 1] else 0   data.append([stat.datetime_stamp.strftime(formatting), stat.value]) ```
+55608340-2661-nu	just curious, is there a reason not to use `if include_only_sources and source_id not in include_only_sources`
+55680730-2661-nu	Not sure I follow... `[]` would also be falsy.
+55052317-2649-nu	Aw man, I remember when I wrote the code this way, originally.  Good times.
+55052488-2649-u	It might be a bit late for this but I find ``` getGenerateReviewWidget ``` to be really confusing to read.  Could it be changed to ``` getWidgetForGenerateReviews ```?
+55209092-2648-u	All of these methods take a comment as the param.  Why not make a ReviewCommentActivity domain object that gets instantiated with a comment  ```python class ReviewCommentActivity(object):     def __init__(comment)     def is_valid(self)     @property     def link(self)     @property     def title(self)     def to_dict(self) ```
+55209278-2648-u	The same could probably be done for ReviewActivity as well
+55210009-2648-u	If you were to create the ReviewCommentActivity object you could encapsulate this logic into it. So all this would need to do is  ```python review_comment_activity = ReviewCommentActivity(activity) review_comment_activity.send() ``` Then the send method can decide whether or not to send the activity.
+55210166-2648-u	Pylint doesn't run for this file (for long lines anyway) and it's a lot more readable if these are all on one line.
+54895331-2642-nu	I wonder if there is some way for us to track who is using the iFrame..  If usage drops to 0 for a good period of time, we might be able to remove it.
+54895518-2642-nu	If I'm not mistaken, this is for the write a review which will still be displayed in an iframe.
+54906782-2642-u	Are these colours supposed to be hardcoded?
+54895331-2642-nu	I wonder if there is some way for us to track who is using the iFrame..  If usage drops to 0 for a good period of time, we might be able to remove it.
+54907585-2642-nu	`text/javascript` is deprecated. You should use `application/javascript` for jsonp and `application/json` for normal JSON requests.
+54193796-2638-nu	Should try to get in the habit of ordering/grouping your imports according to our "standard"... it goes like this: python imports appengine imports library imports app imports  And then ordered alphabetically within each group (less important). So in this case, it should be: ``` from google.appengine.ext.deferred import deferred  from vpubsub import VMessageHandler, ReviewMessage  from app.domain.dev_central import send_activity from app.models.partner import PartnerModel import settings ```
+53806119-2628-nu	This should get reset if ``` submitListing() ``` fails.  
+53318133-2619-u	Shouldn't this be a FilterBuilder?
+53319669-2619-u	Same as above. FilterBuilder.
+53171002-2611-nu	I've been thinking about this for a little while. I think it's probably possible to write a regex string that allows you to use re.sub to strip out `.` characters when they're not surrounded by numbers.  I think something like this would work: `re.sub(r'([^0-9])\.([^0-9])', r'\1\2')`  This basically reads 'any non-numeric character followed by a decimal followed by a non-numeric character`. The replacement string places the first and third capture groups i.e. the character before and after the decimal.
+53171516-2611-nu	If this change merges to prod, are there any cases where the old `getCanonical` method is still used? If there aren't, I think it makes more sense to simply put your changes in the existing method.
+52520888-2606-nu	might want a case for ``` sent === open ```
+52511163-2605-nu	in case you guys didn't know ``` results.aggregations.range('created').buckets[0].doc_count ``` or  ``` results.aggregations.range(ReviewDocument.created).buckets[0].doc_count ``` 
+52517124-2604-nu	I agree. Clearly this should be written as: ``` CS_VIS_SOURCE.GOOGLE_PLUS:     tuple(None for _ in xrange(4)) ```
+52519453-2604-nu	Clearly this is better: ``` tuple([None]*4) ``` 
+52520527-2604-nu	``` tuple(map(lambda x: None, [None for _ in xrange(4)])) ```
+52234148-2601-nu	Is it possible to build one massive query that ElasticSearch can parallelize as much as possible on it's end?
+52238844-2601-nu	would prefer you unpack the tuple properly instead of indexing into it, helps readability ``` total_sent, recent_sent = self._get_email_events('sent') email_stats['sent'] = {'all_time': total_sent, 'recent': recent_sent} ```
+52242665-2601-nu	name this better or make ``` get_stats ``` accept account group id and make it a module level function in its own module. this isn't a good use of a class imo
+52190511-2598-nu	There's a `updateUnique` on the Account model that would probably do this for you.  Not 100% sure that it works correctly though
+52191004-2598-u	if you rollback the `elasticsearch` lib you should rollback the `elasticsearch_dsl as well`
+52191485-2598-nu	wow, `bad-whitespace,trailing-whitespace,' 'missing-final-newline,cyclic-import'` should probably not be ignored, but don't remove them for this PR
+51908333-2590-u	I wonder if we should put a javascript ``` try catch ``` in here.   Having the entire page fail to load because we couldn't bind our tooltips seems like a bigger problem than edge support.  We might even be able to toss the check for ``` data.is_microsoft_edge ``` if we did that. It's generally a bad smell to have browser-specific functionality.
+51377151-2583-u	i think ``` expired_datetime ``` is a little clearer. first time reading this i thought this was supposed to be the datetime that the account expired at, so i was confused by the +1
+51422039-2583-nu	I don't think this is necessary, isn't this method only called by the above `update` method which is already doing this check?
+51267738-2571-nu	I would prefer this file to be called `__init__test.py` just so that the file name matches where the prod code lives. Otherwise someone looking for the tests may not find these.
+51142876-2569-u	Do you need a binding for `form-success-icon`? Can you just add it to the `class` attr?
+51143002-2569-u	Minor, but I would argue `wrapper` would be a more natural naming convention than `area`.
+51143521-2569-nu	Is that `24px` = `$MEDIUM_FONT_SIZE/2` or something? Might help to be a bit more self-documenting if it is That would be one pro of centering this icon and overlaying the text absolutely -- more agnostic to the dimensions of the container and components
+51204067-2568-u	`if 'page_title' not in context:` if you are just checking if the key exists.  I don't think anyone would set a blank `page_title`, and if they did, it was probably for a reason that's getting overwritten here.
+50474793-2558-u	This check should go into the `_can_send_review_share_email` as well  it doesn't really matter if we do an extra get on `ReviewGenerationConfigurationModel` when we aren't going to send the email anyway
+50477972-2558-nu	It might be better to make a  `get_follow_up_swu_email_data` and `get_request_review_swu` email data that take their specific params then both call `get_common_swu_email_data` and return the common stuff with their custom stuff appended.  It think having those three functions would be beneficial even if the `get_request_review_swu` function just calls `get_common_swu_email_data` and returns it's result as that leaves the pattern intact for the next people to add a new email type
+50478052-2558-nu	good catch here, we shouldn't have called it `requestReviewSubject`
+50478611-2558-nu	I would suggest the better way to do this would be to add the option to the `FileField` in `vForm` of `file_can_be_deleted` that defaults to `True` and then update the `forms.js` to not show the delete icon if that's false, then set it in the form handler for this form to `False`.  I think that's the better approach, but it's not a trivial amount of work so it's up to you if you think it fits within this story
+50479575-2558-nu	I think this transaction should have gone into the model ```python @classmethod @ndb.transactional def remove_logo_image(cls, account_group_id, template_type):     """     Does not actually delete the file from cloud storage, only removes the reference to it     """     email_template = EmailTemplateSettings.get_or_create(account_group_id, template_type)     email_template.logo_image = None     email_template.put()     return email_template ``` This is for 2 reasons 1. we shouldn't have put the transaction in the view 2. handle_filedelete can be moved into the abstract form
+50479701-2558-nu	These child classes don't need to inherit from `vfom.ImageUploadHadler` if `AbstractEmailTemplateSettingsVForm` does
+50480114-2558-nu	I think a lot (if not all) of this get_formdata is the exact same between the 3 child classes. If a super function of `create_common_formdata` takes in a email template, then this can become ```python def get_formdata(self):     email_template = EmailTemplateSettings.get_or_create(self.account.agid, FOLLOW_UP_EMAIL_TEMPLATE_TYPE)     form_data = self.create_common_formdata(email_template)     return form_data ``` I don't think `create_common_formdata` is the greatest of names, but the name should imply that `vform.FormData(form_definition=self._get_all_fields())` will be called within it and it will return a new set of formdata    Alternatively you could pass both the formdata and the email_template to the common function and name it w/e you think is appropriate
+50707049-2558-nu	Should we move these to the `config_address-book-(local|test|demo|prod).py` files? more cruft in the settings file but it cleans this up.
+49927773-2553-u	infinite recursion!!!  should be `cls.get_by_account_group_id_async`
+49757490-2547-nu	idk what this `get_enabled_listing_sources` does exactly, but does it matter if it the next thing we are doing in this function filters out all the ids that don't have listings?
+49763809-2547-nu	There are two reasons to filter out sources. 1) The source has no listings 2) The source has been disabled at the partner level  If the ReviewGenerationConfigurationModel has been created for this account, we just grab the selected listings from that model.  A pubsub sent out when the partner's enabled sources were customized removes any partner-disabled sources from this config model right away.  If one hasn't been created (no customizations have yet been made by the user) a default ReviewGenerationConfigurationModel is created, but we also grab the enabled listing sources from the partner (through core) so that we don't select a source that has been disabled at the partner level.
+49786894-2547-nu	Nope.  We still need to get the intersection between the default sources and the given ``` review_sources ```  For example, Facebook is a default source but it can be turned off at the partner level.
+49371976-2538-nu	This should be get_button_url but we are changing that to be  ```python customized_button_url = StringProperty()  @property def button_url():     return self.customized_button_url or self.get_location_page_url ``` So I guess this should stay as it is 
+49372878-2538-nu	jrol wrote the exact same thing here https://github.com/vendasta/SM/pull/1539/files#diff-762efa8432266db1882ad789334ac54cR265 is this from somewhere? could we just reference it? 
+49463253-2537-u	The whole reason jasmine uses the ``` it ``` function is so you can write English sentences like: ``` it('should start as false', ... ``` .    Kind of sad to not take advantage that feature.
+49464100-2537-nu	I'm sure ``` gross html ``` meant something to someone at some point but it means nothing to me and just adds uncertainty to this test.  I'd suggest ``` 'arbitrary string' ``` as it's self-describing.
+49464255-2537-nu	`email-template email-template--selected` `email-template email-template--unselected`
+49465425-2537-nu	Why use `cls_class_name()` instead of just `cls`?
+49465524-2537-u	Why is `template_type` optional here?
+49465756-2537-nu	Sometimes...  ``` >> 'foo' and True True >> True and 'foo' 'foo' ``` 
+49128019-2534-nu	Capitalize the first word after the colon also ``` will be used ```  id just ask renee what the copy text she wants there is
+49087450-2530-nu	You could probably add a test for this to ``` SREP.ReviewManage.spec.js ```
+48999019-2524-nu	If the key exists though and the value is `None`, this will now return `None`.  You should probably change this to `entity.get(API_KEY.MENTION_MODIFIED_DATETIME) or entity[API_KEY.MENTION_CREATED_DATETIME])` if at all...
+49000637-2524-nu	Wouldn't this have raised a KeyError in the first place? It seems weird to me that this worked as is... Am I missing something?
+49001044-2524-nu	That is what Brad is assuming it has been doing.  I'm saying I think the api always returns the key, but may have the value as `None`. I'm not certain though.
+48848887-2519-nu	why jinja? the ``` enable_generate_reviews ``` flag, fair enough thats already in the context, but there's ko used below to get the alternating row shading anyway.
+48860954-2519-nu	We probably want this in the EmailTemplate model and options instead of types as  the types are currently like 'review_request' and 'follow_up' also `return [{'display_name':name, 'template_id': template_id} for name, template_id in EMAIL_TEMPLATE.iteritems()]`
+48862012-2519-nu	This should be a `get` method in EmailTemplate that does this get or put for you
+48863076-2519-nu	This should use that `get` function I previously mentioned
+48863702-2519-nu	I think it would be beneficial to structure this into one dictionary ```python EMAIL_TEMPLATES = {     'review_request' : {         'display_name': "REview REQUesT",         'templates': [             {                 'id': 'template-01',                 'preview_image': 'http://i.ytimg.com/vi/oHg5SJYRHA0/hqdefault.jpg'             }         ] } } ```
+49025199-2519-nu	maybe raise an error if they use an invalid template type. at least when you look through this code later, the use of that ``` TEMPLATE_CONFIGURATION ``` constant here will clue you in as to where the implicit rules of this model really are
+48563256-2511-u	``` viewedComments ``` sounds to me like a function (or knockout object) that returns a set of viewed comments.  I'd recommend naming it something like ``` markCommentsAsViewed() ```.
+48564162-2511-u	check if self.newComment() (is truthy) before sending the ajax call. dont need to send if theres no new comments anyway
+48567624-2511-u	I would pull these 2 tests out into a different describe block. if you are describing "markCommentsAsViewed", then all of your tests inside that block should call markCommentsAsViewed. If you are calling commentsToggleString, even to test that it calls markCommentsAsViewed, that test should happen inside a describe("commentsToggleString", function(){tests})
+48445700-2496-u	are there things that care about ``` posts ``` being returned from this method? seems like the handler just ignores it. if this method only has to report errors then no use returning a tuple.
+47844638-2487-nu	confused about why socialMarketingEnabled is observable (not that you did that). generally, if something can't change within the lifespan of a single page view, it doesnt need to be an observable. don't have enough context to know if enableSocial can change, but also seems unlikely.
+47838870-2484-nu	Can this just be named `lookup_by_partner_id`?
+47838981-2484-nu	`update-sales-person`?
+47839267-2484-nu	Afaik it's always been `get` implies by key and `lookup` implies a query, usually returning a list of entities.
+47828044-2482-nu	Isn't this supposed to be ``` display_location_page_badges ```?  If not, change the test title.
+47784239-2470-nu	I'm kind of confused about what's going on here. I don't think anything in the datastore is currently keyed with 'Account:customerId:\<customer_id\>', so isn't this only checking against accounts that are in the csv and have already been processed?
+47788275-2470-nu	You are incorrect.  The Unique kind has lots of entries with the format "Account:customerId:<customer_id>".  These are used to ensure uniqueness of a customer ID value within the system.
+47791569-2470-nu	I'm still not sure why we're doing this all unique entity handling manually rather than using the built in Account.updateUnique which does it all for us?
+47791645-2470-nu	@cgooding-va that's the unique entity's key, which we use to make sure we don't have dupe customerIds
+47520060-2465-u	could you change the values here from `True/False` to `'published'/'unpublised'` that was the comparison later on isn't against the string `'true'/'false'`
+47520617-2465-u	I'm pretty sure a request of `None` would work here, or an empty dict. I think one of the two would work.
+47572185-2462-u	Could probably be ``` === ```, yeah?
+47643593-2462-u	Hmm... You're right. The server needs to receive an unpublished Flag. Would you mind fixing this function in your PR? Something like ```              else if (field.name == 'publishingStatus') {                  // convert to boolean                  if (field.value() === 'published') {                      published_flag = true;                  } else if (field.value() === 'unpublished') {                      unpublished_flag = false;                  } else {                      published_flag = null;                      unpublished_flag = null                   }              } ```
+47645705-2462-u	``` == ``` does type-coercion to check equality but, really, you know you want a string so why not do strict equality (``` === ```).  I don't really care, it's just Much More Betterâ„¢.  
+47650129-2462-nu	i know the other tests use the toEqual expectation, but I think they should probably be using toBeTruthy and toBeFalsy. Not too important though
+47325242-2450-u	shouldn't we be setting `account.salesPerson.updated` here too? it doesn't look like it was getting set before either
+47161711-2445-u	any chance you'd be able to use getBySrid instead here? RepInt accounts are keyed off srid so it's a cheaper/faster/consistent lookup as opposed to getByAgid which is doing a query instead of a key.get()
+47258705-2445-u	This expected format comment shows a header line but your sentence above says "without headers".  Just to be clear, change this to: ```         expected format:         AG-1234,cust-1234         AG-5678,cust-5678""" ```
+47258985-2445-u	Why are you accepting two different key formats?  Also, I don't think you can use a `csv.DictReader` without headers. How would this `.get('key')` know which column in the file has that key? This code looks like it is expecting CSV headers.
+47259233-2445-u	What does `updateUnique` do?  Why not just: ``` account.customer_id = customer_id account.put() ``` ?
+47259452-2445-u	This line is very awkward. We are building a customer ID and storing it in a `customer_id` variable but that function takes in an arg also called `customer_id`. Why is the original value of the variable not good enough? I thought customer IDs were just strings anyway, what could this `buildCustomerId` function possibly be doing?
+47292312-2445-u	Why did you change this from using updateUnique? I know @jwebb-va asked why we were using it but there is a reason to do so... it handles the updating of the unique entity for you and also ensures that it's in the correct format (pid/id). So you can replace about 15-20 lines here with the one call to updateUnique instead.
+47158152-2444-nu	It would better to put this in a separate method so it can potentially be reused instead of explicitly doing it here. Also I would probably prefer to split on `-` if that's an option in case you get prefixes that are more than two characters in the future.
+47158274-2444-nu	Also doing something like `ssid.starswith('TW')` below might be a little cleaner/clearer imo.
+47158578-2444-u	I'd say `generate_content` is a bit too ambiguous here. Even within the context of this module it's not clear what this actually does or returns. Even something like `generate_review_share_content` would be much clearer imo.
+47158625-2444-u	Why not just `{}`?
+47160039-2444-nu	I don't know about other people, but it wasn't immediately clear to me whether this was the cursor to _get_ the current page or the _next_ page (returned with the result).   I feel like moving this below `process` (to indicate it happens after) and a small comment about how it results in the next url getting added to the response data would make this clearer (at least to me).
+47188309-2444-nu	this is always a tricky thing, when you have to 'pool' exceptions. I kind of like taking the approach where we shove the raw exceptions into the list, keep going, and then at the end if there are any exceptions in the list, we raise some kind of generic SR-specific ComposeException that takes the list of exceptions as a parameter and deals with the logic of expressing itself internally.  ``` for ssid in ssids:   try:     result = client.postToServiceV2(**service_kwargs)   except Exception, e:     exceptions.append(e) if exceptions:     raise ComposeFailedException(exceptions) ```  that way we are still playing by the idioms of try/catch, instead of manually checking return values in a wrapping method to determine if something went wrong.
+47358275-2441-nu	This is pretty minor, but I would prefer to create this model in a setup method and then just tweak the `reviewAdviceDismissed` param as you need for each test.
+47358434-2441-nu	I believe you can specify a list of `choices` which I think would be a good idea to make it clear which values are valid or this string property.
+47358780-2441-u	Minor, but is it necessary to wrap all these methods around `function () {...}` if you aren't passing any "custom" args? Can't you just `click: $root.showTrendOrWordCloudAdvice`?
+47358991-2441-nu	Can you be consistent whether you are including the `()` or not? I prefer to just include it for all knockout observables so it is clear it _is_ an observable. There are a few lines above as well that could be adjusted.
+47359198-2441-nu	I think this is incorrect. The account needs to exist in order for you to execute the process method below. Why couldn't you use the default `BaseAjaxHandler.check_credentials` method?
+47359251-2441-nu	Why not just use `self.help_tag`?
+47359269-2441-nu	Why is this called `help_tag` but named `ADVICE_TAG`?
+47359305-2441-nu	I don't think there is a reason to use `list()` just stick with `[]` please.
+47361142-2441-nu	Can we just do `onDismiss !== undefined`?

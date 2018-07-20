@@ -1,0 +1,266 @@
+60774118-6964-u	not that it matter much but we could remove the indentation with ```if e.content and ....```
+60750445-6961-u	You can see how we check for running jobs in the `run` method on our `ScrapyJobStarter` class. app.domain.scrapy_management.ScrapyJobStarter#run
+60234432-6927-u	Instead of double negative, I think it's easier to read if it's `if u'\u00b7' not in address_container or u',' in address_container`
+60118747-6915-u	I believe `COMPANY_NAME` should be used here. ("cname" instead of "name") -- check out app.domain.profile.Profile to see where it's used
+59915296-6910-u	I think you can remove the `?` from the url.
+59915417-6910-u	Personally I'd like to see this `60` as a constant at the top. I think it just makes it easier to scan and is more organized.
+59916115-6910-u	I think this and `SYNC_STATUS` object should be combined. If you want just error keys you could do something like: ```python class SYNC_STATUS(object):     IN_SYNC = 'IN_SYNC'     NOT_IN_SYNC = 'NOT_IN_SYNC'     NOT_FOUND = 'NOT_FOUND'     # you get the idea      ERROR_STATUSES = [NOT_IN_SYNC, NOT_FOUND, TECHNICAL_PROFILES, ...] ```
+59916659-6910-u	I don't understand what the point of this is exactly. Why can't we just: ```python API_KEY.LISTING_SYNC_PRO_STATUS: directory[UBERALL_API_KEYS.SYNC_STATUS] ``` ?
+59916821-6910-u	Can we make these `LSP_DIRECTORY_TYPE` or even just `DIRECTORY_TYPE`? I don't know if it really matters that we associate it with LSP, the point is just to not use the string directly to prevent errors.
+59917101-6910-u	You should be able to just `directory.get(UBERALL_API_KEYS.LISTING_URL)` instead of needing this `if` statement.
+59919682-6910-u	I don't see `TEST_MAPPED` or `TEST_SUPPRESSED` really used anywhere. Am I missing something? Can these be removed?
+59933901-6910-u	What is the point of this `get_unmapped_sync_statuses` method? I just don't understand why it is necessary.
+59462835-6874-u	I don't think this is used anymore; the `fetch_functions.py` file won't even try to build a `DemonJSWrappedResponse` if the EDGE status code is 504. You can remove this constant, the message constant below, and the logging statement below that uses them.
+61282848-6869-u	This does not feel like the right approach to me.  You've really just moved around the bad habits that were being encouraged with the `FacebookOauthClientMock` class above with some clever code.  Assuming that we like the current pattern for setting exceptions on the `FacebookOauthClientMock` class, then I'd advocate for a different approach than what you've got here.  Instantiating a class that _looks_ like a method in a `with` statement strongly suggests to me that what you're really looking is a decorator.  Beyond that, you've left a whole bunch of old pylint-disables that aren't valid anymore with this approach.
+58899255-6856-u	Maybe this works because you aren't returning a value, but typically you can't yield and return from the same thing. Yielding implies it's a generator and to be consistent you should probably `raise StopIteration()`
+58917304-6856-u	It's not actually true that they have to go. returning None stops the generator, though returning anything other than None is not valid. The difference is that ```return None``` will work inside a try/except that is handling exceptions for a parent class of StopIteration, but StopIteration will get handled by any of those try/excepts it is nested in and a lot of our code does handle ```Exception``` (though it shouldn't be in most cases).
+58798288-6855-u	In order for the transaction to be really meaningful you have to pull the `ReviewCommentModel` out of DataStore inside the transaction.
+58882671-6855-u	@sgryschuk-va I think you're right.  The ReviewCommentModel does have a `buildKey()` function so that should probably be used to avoid eventual consistency.  
+58894827-6855-u	The ReviewCommentModel has the account group id on it.  You shouldn't have to pass it in to this api
+57970789-6830-u	`self.parse_one_item` return None if item is not there and we end up adding None to the results. There should be check for that.
+57908078-6819-u	Forgot to remove `print` here
+57616477-6804-u	I think it is better to give queue name for a pipeline so that we know when they're queued. I saw some occurrence of `ReviewDeletePipeline.start(listing.entityKey, queue_name=QUEUE.REVIEW_DELETE)` which means we already have the queue called 'review-delete'
+57606476-6796-u	super minor but it'd be nice if the order of arguments matched across the functions  ex. ```def create_location(account_group, business_id, category_ids)```
+57066920-6779-u	I'm fine with using the `_tag` but isn't there a `_url` arg? What is the difference?
+57034172-6776-u	Could add a `tag` parameter here for tracking.
+57034304-6776-u	It might be nice to name this so it's clearly distinguishable from `UberallLocationModel.get_or_create`.
+57018736-6774-u	I think it would be a LOT faster, if you were to do a BigQueryInputReader over a query like:  ``` SELECT url, uid, pid, COUNT(*), GROUP_CONCAT(lid) FROM [datastore.LIS] WHERE src = 10010 GROUP BY url, uid, pid HAVING COUNT(*) > 1 ```  There is only about 3300 duplicate urls. This would save a ton of read costs as well as time.
+57019213-6774-u	The `BigQueryInputReader` takes a job id as a parameter, I can show you an easy way to get that.  Example here: https://github.com/vendasta/scheduler/blob/a77618cdcb47c4a9d254b9b658b6c5f2b8ab8875/src/app/scheduler/pipelines.py#L273  Let me know if you need a hand.
+57020965-6774-u	:+1: I'm using BigQuery pipeline in https://github.com/vendasta/CS/pull/6775
+56531592-6757-u	i think ReviewModel is in the review module, not listing
+56402645-6744-u	what if I pass in False for `has_digital_agent_response`
+56402955-6744-u	this logic should be in the ReviewComment model.
+56422628-6744-u	You can take the `and not self.posted_by_owner` check off as it won't do anything
+56246675-6742-u	Will this ever execute before the `account_group.update` task? Have you looked at `VAccountgroupModel._update` method? Just curious about whether all the "syncing" tasks should be deferred from the same location.
+55394911-6699-u	we  could just ```return ApartmentRatingsHandler._scrape_external_id(bs) is not None``` 
+55240472-6683-u	I'd feel safer if this used the constant.  `GLOBAL_SOURCE.GOOGLE`
+55049290-6673-u	I was wondering about this, shouldn't this contain @checkOutputFields(KEY.COMPANY_NAME, KEY.EXTERNAL_ID)? so rather than failing in scrape we fail in _scrape.
+55031245-6670-u	I think this'd be a little clearer called `CHECK_PAGE_SIZE_ON_PAGE`
+54298202-6637-u	I generally view type-checking as a code smell, but it's a little more widely accepted in python than some of the languages I came up on.  There's no reason we couldn't just use ``` VAccountGroup.get_by_agid(listing.agid) ```.
+54301198-6637-u	Check to see if some of your existing tests for ``` convert_cid_to_place_id ``` can be rewritten to test against this new function alone.  That would bring us closer to having true "unit tests" for this functionality..
+54255294-6630-u	You didn't add any doc comment about the most confusing arg: `fuzzy_mode`. Please describe what effects this parameter will have on the function.
+54187314-6627-u	docstrings for this and ```_scrape_company_name```?
+54172745-6625-u	For regex's that get used frequently, I think it is better to use `re.compile` and save the value in a module/class constant. As is, this regex will get compiled every time this function called.
+54113876-6617-u	this is still going to error out if you have `address_parts` as `[]`  I believe this was the error that caused the lockdown: ``` IndexError: list index out of range ``` btw, this will be a good test to have in your unit tests by just passing in empty address and see if this function handles it or not
+54115295-6617-u	we stripping 'None ' here? does there pages explicitly have `None` in the address? or is it the result of us processing the data. just seems odd
+53977406-6607-u	Don't think you can do this. address, city, state, and zip aren't in checkOutputFields which means there have been cases where they haven't been found in the listing and if it isn't found here then strip will fail since it doesn't exist as a method for None
+53700077-6579-u	usually we add these commented lines above each HTML file u add: ``` # Updated: <when it was added> # view-source: <URL> # Testing Purposes: <what we gain from this test> ```  seems like a good practice to follow. Have a look at https://github.com/vendasta/CS/blob/6bb648d773a0c6dcdd1d288e075ec6b20c31b18e/test/domain/listing_handlers/data/apartments/__init__.py#L9-L9 for an example.
+53700528-6579-u	I think ```python address_split = street_address.split(',') if len(address_split) == 1 or (len(address_split) == 2 and address_split[1] == ''):     street_address = street_address.replace(',', '') else:     street_address = address_split[0].strip() + ' ' + address_split[1].strip() ``` could be condensed down to   ```python street_address = facility_address.find('span', {"itemprop": "streetAddress"}).text.strip(u', ') ```
+53700900-6579-u	same here. ```.strip(u',')``` seems like what you want so you aren't also removing commas inside the text. granted that shouldn't really be an issue here. more so in city or address.
+53701223-6579-u	I believe we can do this too: ``` findText(facility_address, name='span', itemprop="streetAddress").strip(u', ') ```
+53701628-6579-u	seems more clear to me than using `{}` in function argument..just my preference :smile: 
+53702024-6579-u	yeah, another thing..lets make these functions `static`
+53691966-6578-u	This is a little more verbose, but I find it easier to understand that the code is intending to handle none type exceptions:  ```python nap_address = account_group.address.lower() if account_group.address else None listing_address = listing.address.lower() if listing.address else None address_match = nap_address == listing_address ```
+53483246-6562-u	Did you forget to delete something? Why is there this sentence fragment? `The expected untouched return object`
+53472976-6560-u	could just ``` or ```
+53384770-6551-u	What's with the last `makeTestListing`? I think this can be removed.  I'd also like to see this test narrowed down to make it clearer what's actually being tested. Looks like this change only affects the address, so I think the rest can be cleaned up.
+53378470-6548-u This looks like a new function. It is being used on line 63 in this file which replaced the old usage of `self._rescrapeReviewsForListing(lid)` but I don't see that old (unused?) function being deleted.
+
+17078036-1065-u	Minor - `self.urls.getCustomerPostsUrl` instead of hardcoding the URL string
+17131471-1065-u	I don't think we need this, since `self.hasResponder` is set to `false`, right?
+16918880-1060-u	Minor, could use `defaultdict(list)`
+17007128-1060-u	I think ```CustomerResponseViewModel``` would be more appropriate here
+17051416-1060-u	feedmodel is no longer used within the SocialPost object I had thought? This shouldn't be needed in the factory call.
+16755566-1058-u	We typically don't work directly with ```this``` in our knockout models as it's very easy to change the binding context of 'this 'in knockout.   Using self, is a convention to indicate that the binding context of this is the viewmodel so you don't have to think about what "this" is referring too. Most teams are following this practice. 
+16557690-1054-u	I think we've run into another one of those multi pull requests open issue. Passing the feedModel in should not be required here.  If you review the below which should be merged in soon, the feedModel is available on the $root model.  https://github.com/vendasta/SM/pull/1049/files
+15671118-1025-u	I realize we don't intend to set the flags from True to False, but a more "correct" check is `if dismissed is not None:`. 
+15675593-1025-u	Are you doing this to make url indexed?  I think it was a TextProperty to avoid the 500 char limit. 
+15676052-1025-u	Even though shareContent() takes you to a different tab, could it use a similar safeguard against double-clicks?
+15384294-1021-u	for cases like this where there are lots of '%s', using ```"?{0}={1}&{2}={3}".format(API_KEYS.API_USER, 'ABC', API_KEYS.API_KEY, self.partner.api_key)``` looks cleaner
+15552962-1021-u	This might be a case for naming the arguments: `"?{userkey}={uservalue}&{apikey}={apikeyvalue}".format(userkey=API_KEYS.API_USER, uservalue='ABC', apikey=API_KEYS.API_KEY, apikeyvalue=self.partner.api_key) `
+15252173-1014-u	would it make sense to put this line under the ```if conversation:``` below. just feels weird to sort an empty object.
+14780805-1006-u	This *may* give you some problems in some browsers.  In some browsers the javascript engine will respect the mime type of ```application/json``` and do the parsing of the response body for you.  So, when you try to do this with a JSON object it will throw an exception.  In this case you're looking at ```responseText``` which might always be a string... So I might be completely off here, but I suggest verifying that this works as expected in Safari since that's where I recall running into this issue.
+14798570-1006-u	Just `visible` is sufficient in my opinion... and remove that extra "i".
+14825070-1006-u	I would make these urls different values.  Your test cases for each of these respective calls lose a lot of meaning when they're all the same.  I'd suggest something like ```/fake/publishComment/url/``` etc.
+14826128-1006-u	MIssing ```;```
+14826134-1006-u	Missing ```;```
+14829870-1006-u	In an ideal world... this is another jQuery pattern we'd find a way to avoid... just not a fan of the jQuery-ui dialog at all.
+14487435-999-u	Is there a way to make these sourceIds less magical? 
+14524744-996-u	Minor but this could be moved up to the top of the file as a constant:  ```python ERROR_TO_DOWNGRADE = ["INVALID_URI", "ALREADY_A_BITLY_LINK"] ```
+13866419-982-u	Please add exc_info to error logs, so that exception information is added to the log message. ``` logging.error(err.message, exc_info=True) ```
+13675109-979-u	suggestion, just for us to determine if the feed was deleted or not based on the logs: ``` if do_delete:     print("\tDeleting feed item %s" % item.title)     item.key.delete() else:     print("\tWill delete feed item %s" % item.title) ```
+13620276-970-u	You might as well put this for statement inside ```if accounts:```
+13606087-968-u	In delete_account.html, dialog text is wrapped with a ```<p></p>```.  Should that be the case for all dialogs?  Also, how hard would it be to have just one "delete dialog" template that everyone just uses, but with different text messages? 
+13673184-968-u	This should be changed to:  ```     <script type="text/javascript" src="{{ '/static/js/SM.Settings.js' | vurl }}"></script> ```
+13566066-967-u	Not a fan of this class name, as in its current rendition it has nothing to do with sso or authentication. Can re rename to PartnerLookupMiddleware? or something along those lines
+13448408-966-u	Core is now giving us an informative message in CSApiException, so it should be used in the logging.exception() and perhaps in the gritter presented to the user.  Have a look at my comment for the bug from May 20th.
+13156872-953-u	I'm a little confused.  The stack trace shows that a DownloadError is raised, but you are catching an ApplicationError.  In _get_fetch_result (urlfetch.py), an ApplicationError is being caught and then a DownloadError is being raised.  Shouldn't you be catching a DownloadError here?
+13185117-953-u	Note, that a "download" error is typically caused by the url fetch meeting the system imposed deadline of the fetch service of 5 seconds. If we are encountering this error, the deadline of the fetch should be increased.   ```python response = urlfetch.fetch(self.url, deadline=60) ```
+13185168-953-u	As per Rogers comment I would rather see you explicitly "catch" the DownloadError.
+12970430-948-u	@aknox-va is always on my case about code like this, and would want me to write it: ``` account_groups = [     registration     for registration in registrations     if registration['uid'] == 'vbc' ] ``` I'm still of the opinion that this is a coding pattern for hipsters and has an RPN-like feel to it, but it is growing on me.
+12976787-948-u	:+1:  I mostly like not having to write/see ```account_groups = []```
+12949829-946-u	Note, this looks like it was existing code, however if a json response is to be returned the correct mime type to use is `application/json`.
+12957571-945-u	This method is kinda silly.  I assume that the method ```social_post_comment.fetch_comments()``` does the same sort of param validation you're doing here.  So why wrap it?  Just for a nicer name?
+12957967-945-u	I would rename this class ```GetSocialPostHandler```.  ```GetPostHandler``` is just confusing.
+12961511-945-u	This would be ```$LINK_COLOR```.
+12961554-945-u	Not a color in our current palette.  ```$PRIMARY_BORDER_COLOR``` is ```#DADADA```.
+12966821-945-u	Should be ```$TERTIARY_FONT_COLOR```.
+12966949-945-u	Should be ```$SECONDARY_BACKGROUND_COLOR```.
+12967055-945-u	Should be ```$TERTIARY_FONT_COLOR```.
+12967185-945-u	We've been indenting all KO flow control blocks for ease of readability.  So this should be: ```html <!-- ko ifnot: loading -->     <div data-bind="template: { name: 'post-profile-template', data: post }"></div> <!-- /ko --> ``` 
+12967345-945-u	We've been running into problems with IE when the ```attr``` elements aren't quoted.  For IE safety this should be ```<img data-bind="'attr': {'src': fullSizeProfileImageUrl() }" />```.
+12967533-945-u	Quote ```data-bind``` keys.
+12427714-925-u	If this returns the service's name then I think `self.service_name = ...` might be more appropriate.
+12428066-925-u	Is this used anywhere? I can't find it. Also seems unnecessary since you could just `leads|len`
+12428115-925-u	I find it odd to pass a "placeholder" empty value here (and for `leads_responses`). Why not just specify it as an empty list or null arg in the js code?
+12432173-925-u	Instead of having two binding here, you could have only ```truncateText``` binding and in your custom binding handler have ```init``` to initialize with initial value. Most probably you might be able to do ```init: function (element, valueAccessor, allBindings, viewModel, bindingContext) { view_more_expander(element); }```
+12434268-925-u	If you are following convention that is fine. Technically the convention is to use camelCase in JS and snake_case in python. I don't believe there is any particular reason to declare them in or outside init(). Personally though I find I sometimes need to declare event handlers inside init so they have access to `self`.
+12230179-923-u	Instead of iterating over the items you can just assign directly: ```python country_list = COUNTRY_CODE_DICT.items() ```
+12230279-923-u	Minor, but I would simplify the above two lines to: ```python country_list = sorted(COUNTRY_CODE_DICT.items(), key=lambda x: x[1]) ```
+12230504-923-u	I'm not sure how often this is done, or how big this dict is, however you might want to consider declaring a name to code map/dict (where `COUNTRY_CODE_DICT` is declared) so you can just lookup by key instead of having to loop through (potentially) the entire dict each time. ```python COUNTRY_NAME_TO_CODE_MAP = {name: code for code, name in COUNTRY_CODE_DICT.iteritems()} return COUNTRY_NAME_TO_CODE_MAP.get(country_name.lower()) ```
+12230936-923-u	You can just move this if/else logic into the for-loop above which will allow you to potentially avoid looping over all the keys, and also avoid looping over it again in the else section: ```python for code, name in states.iteritems():     state_upper = state.upper()     if code.upper() == state_upper or name.upper() == state_upper:         return code ```
+12231017-923-u	Minor, the `None` is unnecessary since `get` returns it by default if value not found for key.
+12231147-923-u	Why are you using `slice` here instead of just assigning choices to data?
+12235362-923-u	You could also use OrderedDict from the collections library here
+12236281-923-u	if the ```if country:``` is removed, then ```state_list = []``` also isn't needed
+11741531-908-u	this back_url variable doesn't seem necessary. I would rather this written as ```params[UrlKeys.BACK_URL] = self.request.GET.get(UrlKeys.BACK_URL) or self.wl_data.get(WL_KEY.AA_EXIT_LINK_URL)```
+11741574-908-u	same with back_url_text ```params[UrlKeys.BACK_URL_TEXT] = self.request.GET.get(UrlKeys.BACK_URL_TEXT) or self.wl_data.get(WL_KEY.AA_EXIT_LINK_TEXT)```
+11815593-908-u	 You could use ```{{ back_url_text }}``` here since the logic on deciding the text as "Logout" is already in base.py
+11509008-900-u	BaseHandler already has 'pid'.
+11395523-891-u	I think it would make more sense if this were  ``` result = shorten_links(long_url) or {} short_url = result.get(long_url, long_url) ```
+10903022-875-u	Should we check on ```e. statusCode=409``` and do ```logging.info(e.message)```?
+10666620-861-u	I prefer ``` hidden = bool(expiry_str) if not hidden:     expiry_str = datetime.datetime.utcnow().strftime(KEYS.ISO_DATETIME_FORMAT) ```
+10667063-861-u	```blob_info = [{'blobkey': key, 'serving_url': url} for url, key in blob_keys.items() if url in post_text]```
+10667451-861-u	this seems like a good place for ``` message = 'Scheduled successfully.' if parsed_post_datetime else 'Posted successfully.' ```
+10307377-851-u	You meant to say unauthorized twitter account so it should ```hasUnauthedTwitter``` ?
+9886676-836-u	sets don't always work for objects though, if the comments are objects then they will require ```_eq_``` to be implemented
+9886912-836-u	just do ```[comment for comment in comments if comment not in unique_comments]``` instead of having this function
+9887127-836-u	I don't think this is necessary, we sort all comments below with ``` if is_allowed_twitter_post and len(feed_item.comments) > 0:                   feed_item.comments.sort(key=lambda m: m.get(CS_KEY.SOCIAL_POST_CREATED), reverse=False) ```
+9887916-836-u	change this line to ``` posting_history_comments = fetch_posting_history_by_date(spid, oldest_mention_date) || [] ```  and you can get rid of ``` if posting_history_comments: ```
+9888167-836-u	```get(CS_KEY.TW_USER, [])``` should be ```get(CS_KEY.TW_USER, [{}])``` if you are going to try and access the first service on lines 211 & 212
+9888344-836-u	this whole if/elif could be just ``` conversations[reply_to_post_id] = conversations.get(reply_to_post_id, []) + [filtered_comment] ```
+9909531-836-u	Turns out I may have been right after all. The ```if a in b``` I believe checks for a reference to the same object which would be why you don't need eq implemented. Though I did forget that the object also has to be able to create a hash code, which dictionary does not implement
+
+30082243-1215-u	You are accessing a private variable here and ndb provides a public accessor method: `microsite_key.namespace()`
+29594235-1211-u	Does having both `get_async` and `get_result` in the same line actually have any benefit over just `get_result`?
+29594395-1211-u	I more mean, can't you just drop `get_async` here?
+29626353-1211-u	Instead of taking the first item from `host_slugs` list, you might want to take first item which does not have value in `redirect_hostslug`. If there is a value in `redirect_hostslug` that mean the hostslug redirects to the url that's in `redirect_hostslug`.
+29626816-1211-u	I see that `host_slugs` that is passes here is filtered with `redirect_hostslug==None` in `/internal/site.py` but the in the above `build_add_review_url_from_slug` method does not get filtered host_slugs. This is bit inconsistent, may be you should put the filter in these method or have different method that does that for you?
+28998374-1202-u	should this be `microsite-demo` instead of `dev`?
+28825772-1195-u	I think you can just use `fetch(1)` here?
+28837003-1195-u	I'd prefer to see any new APIs written using the vapi property style, i.e. ``` class GetReviewUrlApi(InternalApiMixin, vapi.ApiHandler): ... pid = vapi.StringProperty(required=True) review_id = vapi.StringProperty(required=True) agid = vapi.StringProperty() msid = vapi.StringProperty() ```
+28837132-1195-u	I'd rather return this as a keyed dictionary than a raw string like this. Otherwise, we would have to break the API to add any more return values in the future. i.e. `return {'reviewUrl': 'http://...'}` Also, we need a trailing slash on the URL to match the work done in the other branch.
+28837291-1195-u	`slug_query.fetch(1)` returns a list, doesn't it? You should just be able to do `slug_query.get()` though (it will return the first result of the query).
+28837330-1195-u	Ah, I see you are doing `slug[0]` in the return though.
+28837373-1195-u	`assertRaises(vapi.ValidationError)`
+28875438-1195-u	Yeah `get` makes more sense really I suppose.
+28882336-1195-u	`Unless otherwise noted, a 200 response code indicates success` is already prepended to the top of all the api docs.  This probably isn't worth changing at this point though
+28883957-1194-u	needs some clarification here `jrans_local__listing_source = 12000` `if review and review['sourceId'] != yahoo_local_source:`
+28522034-1189-u	Yes I think for `/<slug>/review/add/` there won't be any conflicts. Only concern is `review` as slug itself.
+28522451-1189-u	isn't everything up until ``` ?msid=msid&pid=pid ``` unnecessary? you could send a dictionary with msid and pid instead. 
+27502067-1172-u	LD subscriptions typically span 1 year, so they are both false for the first 9 months of that. For the last 3 months, it would just be `expiring`, and after the year, they are both true. `expiring` is just there so that we can render a sort of warning message to poke them to re-subscribe.
+27268306-1171-u	Typo: `Base handler to upload Blobs into the Blobstore`
+27254056-1170-u	`and that it has a more info tab association`?
+27254235-1170-u	Nitpick: `TestIsValidMoreInfoTab` 
+27254588-1170-u	Typo: `...false_is_returned`
+27254646-1170-u	Typo: `...exists...`
+25696950-1149-u	This one you might might need as it doesn't look like `AuthenticatedAdminView` has the whitelabel middleware (although maybe it should)
+24510379-1128-u	Rather than importing vapi here and raising a validation error, can we change this to ```raise SomeException''' instead.   Within the vapi usages it will become a try / except block on the expected error to raise the validation error. 
+24510471-1128-u	```python try:     args['host'] = get_host(pid, partner_host, market_id) except SomeException:     raise vapi.ValidationError('your message') ```
+23779738-1116-u	perhaps could simply be:   ``` return self.expiringStatus() === 'expired' ? 'Expired:' : 'Expires:'; ```
+22689254-1085-u	Maybe `bool(json.loads(self.images))` here just to keep the 'Returns True or False' bit true or `return bool(what you have now)`
+22471381-1078-u	Should you mark this comment with `TODO` or something?
+22473131-1078-u	You're doing an `abs()`, so you can just compare on the positive range. Or drop the `abs()`
+22473177-1078-u	These two lines are a funny formulation. Why not just raise the ValidationError directly?
+22473489-1078-u	`slug_suffixes_to_try`? Slug is getting overloaded...
+22474064-1078-u	or `slug_suffixes`
+21831434-1066-u	I meant a `get_ld_activation_date(syndication_orders)` function and `get_ri_activiation_date(ri_account_future.get_result())` function.  The way you have them sectioned off and commented makes them seem like they should be in separate functions anyway.  If you return None instead of raising an error, the end result would be getting more stats not a 500.  Which should never happen anyway as it's expected they have these values already.
+20796972-1053-u	I'd vote for this being `recent_syndication_order` or `recent_order`
+20808126-1053-u	the core api returns this as  `syndicationOrderStatusActive`
+20813445-1053-u	The `operator.is_active` should be last as it's costly to do, so if we don't have to we shouldn't
+20813700-1053-u	The `get_account_group` and `fetch_product_pid` can be done asynchronously here
+20878349-1053-u	From here `http://microsite-dev.appspot.com/_ah/stats/`  ![screen shot 2014-11-25 at 11 15 25 am](https://cloud.githubusercontent.com/assets/6391814/5187728/c5d2d1d8-7494-11e4-977c-9c7cc3f6bbca.png)   you can see there's 6 urlfetchs that could all probably be done in parallel.  There's also major downtime caused by cache misses, but that's another issue.
+20886298-1053-u	I was thinking you could use `getAccountGroupAsync` and then the `fetch_product_pid` wouldn't have to be async. But as you have the account group here, the account group has the rm pid on it (which is just the pid or vbc pid) so you can use that instead of doing the fetch on line 107
+20890254-1053-u	After talking with @jrans-va it looks like you can just add the `vstats.api` module to their sdk gen and it will add the endpoints  to their sdk.  There was a slight problem of that as in vstats the required/allowed args are duplicated, but that should be a pretty easy fix.
+20974539-1053-u	kind of odd place to put this, isn't it? even ```app.domain.__init__``` seems to be a better place  IMO
+21006134-1053-u	I don't understand the need for this object. it seems like it's just wrapping `lookup_syndication_orders_async(self.agid, page_size=self.page_size)` and making it more complicated
+21094495-1053-u	Could this be replaced with the `serialize_datatypes` method in vapi? `vapi.handler.ApiHandler#serialize_datatypes`
+21094796-1053-u	Vapi now serializes the response so that any params that end in DateTime into actual date time objects that can't be dumps'd by the standard python json serializer
+21095057-1053-u	I'd also prefer for the calls to this function actually call `json.dumps(vdata, default=desrializer)` instead of calling this function.  For something this simple it seems better to me to have the transparency of requiring a separate deserializer instead of doing that here.
+21095069-1053-u	I don't see usage of `ISO_DATE_FORMAT` anywhere.
+21095599-1053-u	It should be `sm_account` instead of `repman_account`.
+21095734-1053-u	@utandukar-va @cdaviduik-va I think this is where you were going to use `ISO_DATE_FORMAT`
+20389802-1048-u	I think this should fall back to a lookup if memcache returns `None`. Probably logging a error/warning would be appropriate if that ever happened though.
+19950497-1043-u	All of these `new X(...)` statements can go in the `beforeEach()` and be assigned to `self`. It'll reduce the test code size by a lot.  If you need special initializations for certain tests, each `describe()` block can have its own `beforeEach()`.
+19975334-1043-u	Oh; I didn't realize DashboardItem was immutable. No problems then. :+1: 
+19029302-1014-u	You could replace this list comprehension with `filter(None, profile_fields)`. Using `None` as a predicate function with `filter()` only keeps truthy values.
+18659049-1005-u	Do you need to protect against `self.latestSyndicationOrder` being `undefined` or `null` here?
+18480981-996-u	Can you just add a comment indicating what this matches and, if possible, a link to where you got the regex from? Does this require the url starts with `http`?
+18397078-991-u	Could `columns[1]` be None?
+18486268-991-u	or ``` dimensions = MSID_KEY if use_msid_dimension else 'ga:date' ``` to avoid assigning value again to dimensions variable
+18226627-986-u	I suggest using the ```VGaeTestCase``` from ```vtest``` for new test classes.
+18035430-983-u	Empty lists evaluate to false, so no need for the `len()` here. Same as in `get_formdata()` above.
+18035534-983-u	I did this for awhile until I came across `enumerate()`. You can re-write this as: `for i, _ in enumerate(self.hostslugs):`
+18040508-983-u	there are other exceptions that can possible be thrown such as ```InvalidSlugException```. shouldn't those be handled as well?
+18042279-983-u	I don't think we should be using this `AdminEditForm` since it mixes with the VForm request handler and our BaseHandler for, in my opinion, unexpected results. Also because the `VFormHandler` defines a `dispatch` method the `AuthenticatedEditSiteView` one doesn't get called so our middleware is not executed. I'm not sure how using `AuthenticatedEditSiteView` benefits us for rendering vforms.
+18043578-983-u	If you want to reuse this in multiple methods I think I would prefer something like: ```python @property def hostslugs(self):     if not self._hostslugs:         self._hostslugs = [hs for hs in lookup_hostslug_msid_mapping_for_msid(self.pid, self.msid) if hs.redirect_hostslug is None]     return self._hostslugs ``` Then we don't have to worry about what order the methods execute. Also I think it is a bit easier to read.
+18043668-983-u	Ya `enumerate` is sweet. I agree would be useful here and above.
+18043766-983-u	Minor, but probably just declare `var $this = $(this)` so it doesn't need to be recomputed every time.
+18049405-983-u	I find `check` doesn't really indicate what you are checking. Maybe something like `does_hostslug_exist()`.
+18050875-983-u	Did you try putting this in `pre_process_hook`? I think that might be more appropriate for this because then the middleware would have run already. We should probably avoid looking up data before we have verified the msid/pid are valid. I might try to move the stuff I did into `pre_process_hook` as well.
+18051110-983-u	I don't think you need this check at all. If `self.hostlug_mappings` is an empty list it just won't iterate over anything but the code below still works.
+18051605-983-u	`enumerate` gives you an index and the value so you might want to: ```python for i, hostslug_mapping in enumerate(self.hostslug_mappings) ``` Just a bit cleaner than `self.hostlug_mappings[i]`
+
+46624358-2434-u	Since this already lives in the ``` repcore ``` module, I don't think you need to add ``` fromCoreServices ``` to the method name.  This should also probably be snake_case, unless there's a good reason for it to be camelCase.
+46624933-2434-u	It would be more pythonic to write  ``` return "%d star %s" % (rank, content) if rank > 0 else content```  And, actually, ``` % ``` is deprecated in python 3.  (Even though I always forget to do this) So, it should be: ``` "{0} star {1}".format(rank, content) ```  But neither of these things is that important.
+46625988-2434-u	format also accepts kwargs which makes it possible to give some context like ```"{rank} star {content}".format(rank=rank, content=content) ``` which is neat sometimes (and just overly verbose other times).
+46424845-2432-u	if exceptions is an empty list, it will be falsy.  So you should be able to do ``` if exceptions ```
+46332169-2431-u	Not sure about this but we could probably just do ``` expect(socialCompose.isValidReviewShare()).toBe(true); ```
+46335437-2431-u	So just a couple FYIs here... If using ko > 3.0 (I think we all are) you can shorten this to `ko.unwrap` instead of `ko.utils.unwrapObservable`. The main reason to use it is when you don't know whether or not the variable you're testing is an observable or not, it will always return you the value.
+45884290-2412-u	By convention, kwargs go on their own line  ``` lookup_account(pid,                 srid=srid,                 customerId=customerId,                 account_group_id=account_group_id) ```
+45884427-2412-u	Could safely change customerId to snake_case
+45469078-2404-u	do you still want this `is_beta` flag? I thought the `is_feature_enabled` check was all you needed
+44033431-2343-u	It looks like the review doesn't include the `agid` and specifies `rid` as `reviewId` so we should probably be consistent. I think those are the only two fields that need adjustment though.
+44062511-2343-u	The api key values used for comments here and below are the same right? Is it easy to move this into a `to_review_comment_dict` method? I'd prefer to see that instead of manually converting them in two places.
+43840975-2340-u	I wouldn't call this ``` UpdateAccountAjaxHandler ``` , especially if it's going to 400 because of the publish rating. SR probably has a bunch of ajax handlers already that 'update the account' in some way, but their names are scoped to their specific purpose. There's nothing wrong with calling it ``` UpdateReviewPublishSettingsHandler ``` or something more specific.
+43841378-2340-u	i think making them click save is pedantic. Instead, whenever the value of their currently selected setting changes, you could run updateAccount, show a spinner, and a gritter (success message) upon a successful update.
+43905277-2340-u	ajax routes are so rarely changed in practice (in my experience) that the benefit of doing this seems minimal. when you have the relative path in the javascript it makes the javascript easier to understand too. 3 months from now no one is going to remember what baseUrl is, and even if it was named something more specific, it always forces you to go find the handler that renders the page with this js and figure out what baseUrl is supposed to be anyway. I find that a lot more work than just ctrl+f on the relative url in your routes if you are thinking about replacing it.  I think using relative urls keeps all these files more readable too. Handler has less code, context has less crap in it, javascript model has less parameters, less variables.
+43909477-2340-u	Well self.rating being updated by the dropdown changed event is very anti-knockout when you already have a bind for it and could just compute it if the value of the option is not what you want to send. Also using events in general is often a ```$```ign that the right binds aren't being used (they have their place though), we can construct most of the behaviour we need based on what happens to the variables we've actually binded through subscriptions/computed observables. I think you've changed all this stuff though :+1: .  The suggested computed function was just to prevent the ajax from submitted if they had selected manual publish, but changed the auto publish dropdown setting. Looks like you disable the auto publish select if manual is selected so that shouldn't be a real problem.
+42778775-2326-u	ew to your field name, but i see you're following convention... I realize the reason for the "Flag" is just so vapi recognizes it as a boolean, but personally I'd rather see the whole thing camelCased than this mashup of the two
+42779061-2326-u	`rid`?!?!? :disappointed: 
+42779666-2326-u	this seems weird to me... I think `logging.error(str(e), exc_info=True)` might be more appropriate
+42261655-2316-u	I see you adding the `has_beta_flag` to the default request context but you aren't using it anywhere else in this PR to show/hide the "Respond" button.
+40730935-2272-u	can just be `more` and apart of the `more > 0` if block
+36306584-2215-u	I know this was already here, but it would be great to use a constant like `LOCATION_PAGE_SOURCE` for the number.
+36306743-2215-u	Also, I believe we should be accessing the class level variable through the mixin and not through `self`.
+36309677-2215-u	Lets extract `source_id == 12000 or account.pid in GetReviewsMixin.FULL_REVIEW_PIDS` into a variable so this line can become clearer:  `review_content = review_content if include_full_review_content else review_content[:API_KEY.REVIEW_SNIPPET_LENGTH]`
+36309880-2215-u	Also, can we extract `12000` into a `FULL_REVIEW_SOURCES` constant like we do for PIDs?
+35802473-2206-u	I'd rather see the `BaseJsonHandler.render_response` sprout a `status_code` kwarg than this. Using the status codes will let the `jQuery.ajax` calls on the front end dispatch to success and error callbacks for you.
+35803297-2206-u	There's actually a class called `.view-details` in the file `src/steprep/static/compiledcss/scss/_common.scss` which you could rename, or simply use, so that this can be a span.  If this is left as an `<a>` tag the user will be able to use the browser's "open in new tab" features, which will totally break things.
+35807454-2206-u	see comment below... if you move this to VAPI this parameter simply gets marked as required. You can even use the property based VAPI definition, so it will auto-handle the conversion between camel case on the request, and snake case for the code... like so (on the class level):  `source_id = vapi.StringProperty(required=True, description='The source ID')`  then later, in your process method, instead of `args['sourceId']` you use `self.source_id`
+35808133-2206-u	You might still have to leave the self.agid assignment here because you are dynamically creating your HTML hooks for the extension, but this getCredentials function can go
+36191057-2206-u	Pardon my OCD, but the endpoint is `sourceCredentials/lookup/` but the handler is `GetSourceCredentials` - can we change the former to be `/get/` or the latter to be `Lookup...` ?
+36191789-2206-u	These definitely don't belong in `coresdk.keys`... I actually don't think they belong in any of our current keys files. I'd be happy leaving them as magic strings.
+36191928-2206-u	You should just use `vapi.NoAuthAjaxHandler` instead, it handles returning True from check_credentials for you.
+35432839-2205-u	`RequestContextClassTest`
+34154574-2154-u	This was our very very first vapi endpoint in SR and it was done before we had the concept of internal vs external APIs (you'll notice the URL for it is /api/v2/notification/ rather than /internalApi/v2/notification/). So yeah, it should probably be moved. Thanks for the cleanup!
+33971169-2148-u	There should never be a case where this is valid. What is this guarding against?  Why not just? ```  partner_host_name = urlparse.urlparse(partner_host_name).netloc ```
+33972423-2148-u	If all the tests pass without the if check, let's take it out; I agree that it seems unnecessary.  If it is necessary, I don't think it is good practice to is `is` for string equality checking, string instances aren't guaranteed to share identity in python. http://stackoverflow.com/questions/1504717/why-does-comparing-strings-in-python-using-either-or-is-sometimes-produce  Use == instead. Or even better, just check for a false-y value: if not netloc_partner_host_name:
+33974196-2148-u	Not that this is bad, but I wonder how much overhead this has compared to doing something like: ```python import re p = re.compile("^http://") if p.match(url):     pass ```
+33830484-2146-u	You renamed this to $GREEN_BACKGROUND_COLOR, https://github.com/vendasta/SR/pull/2146/files#diff-a0c3907a7b41a9d6fc1aad1f2b12eedaR12
+33833661-2146-u	There's a pretty big difference between ```#333``` and either of your proposed values.  ```#333``` seems to be used very frequently within SR.  I suggest creating a new variable in the project here (not in ```_colors.scss```, somewhere specific to SR) and using it throughout.  There's just too big of a difference between the existing color and ```$LIGHT_GREY``` or ```$PRIMARY_BORDER_COLOR```.
+33357968-2124-u	No need to call `.keys()` here as `'key' in dictionary` works :)
+33169041-2118-u	`SocialCompetition` is it's own entity and `updateCompetitorsByAccount` doesn't put it, it just returns the updated `SocialCompetition`. You should proabably pull this out of this transaction so that it isn't cross group and make sure to put the return of your call here.
+32733611-2101-u	MagicMock to avoid the param and return value assignment in the test?
+32532676-2085-u	dat extra spacing before `else` :trollface: 
+32333031-2078-u	These could both be a `MagicMock` second parameter to `mock.patch`, to avoid taking the arguments in.
+31958760-2059-u	Little nervous to see updates like this coming in. I assume this was a transitive dependency brought in when you updated the `vautil` version?
+32122080-2059-u	This whole function can be factored nicely now: ```python @staticmethod def validate_and_normalize_phone_numbers(args, country=None):     """ Validate and normalize all phone numbers within the provided args. """     def _normalize(kind):         if kind not in args:             return         norm = lambda n: \             AccountValidationMixin.get_normalized_phone_number(n, kind, country)         value = args[kind]         args[kind] = [norm(n) for n in value] if isinstance(value, list) else norm(value)      kinds = [         API_KEY.ACCOUNT_FAX_NUMBER, API_KEY.ACCOUNT_CELL_NUMBER,         API_KEY.ACCOUNT_WORK_NUMBER, API_KEY.ACCOUNT_CALL_TRACKING_NUMBER     ]      for k in kinds:         _normalize(k) ``` (Remove functional idioms as you see fit...)
+32123197-2059-u	No need to create an object of `AccountValidationMixin` here, as the method you're testing is static; same with the test below.
+32138551-2059-u	Usually I have seen us not raise an error in this case, but wrap the non-list value that was pass-in in a list. At least, that is how it was done on Core's API handlers.  E.g. ```python if not isinstance(work_numbers, list):     work_numbers = [work_numbers] ```  That way we handle the case if it isn't a list without causing an error for the caller.
+31176860-2036-u	can use `toBeTruthy()` here
+31176881-2036-u	can use `toBeFalsy()` here
+31177201-2036-u	This test actually doesn't have anything to do with `loadSearches` really. You should pull it out to the "initial values of knockout observables" section at the top of this file
+31253138-2036-u	this seems a bit odd, why are you using `rem`s here?
+30277574-2023-u	`if len(company_name) == 0` and just be `if not company_name`
+30144257-2017-u	There are going to be thousands of these (as repintel has "admin accounts" which don't have agids)... I know we've seen issues in MRs before that have too many unique counters, maybe we should add one more if check up front for `if account.hasAdminPerm or account.hasSuperUserPerm` and not bother logging the key with it
+30144913-2017-u	Is there a point to making a list out of the keys? You're only using it to check if the key is in the dict, which is just as easily accomplished by `if key in ACCOUNT_GROUP_MAPPINGS`.
+30152651-2017-u	This second if statement isn't needed -- it can just be added to the previous level with `and`.
+30152759-2017-u	Can be combined with the previous level using `and`
+29953556-2010-u	I think you might be missing some changes further down for employee twitter accounts. Specifically, we check against `twitter.linked` which I believe no longer exists?
+29953767-2010-u	Should `'MS'` be in this list as well? Or does MS not have social sharing?
+29193483-1997-u	isn't this exactly equivalent to `Account.updateUnique(account, customerId=customer_id)`?
+29194125-1997-u	you're ticking counters and stuff `test_account_not_found_ticks_counter` or something. meh not a big deal.
+28930453-1990-u	let's not put this here... creating this mock for every single CoreServicesTestCase is unnecessary
+28930504-1990-u	bah i guess you probably can't because these are already mocked by CoreServicesTestCase? bleh
+

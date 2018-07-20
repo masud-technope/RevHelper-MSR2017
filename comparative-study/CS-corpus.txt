@@ -1,0 +1,256 @@
+68087996-7295-u I'm not sure you need to do `len(location) > 0`  I think `location[0] if location else None` will work the same since an empty list if a falsy value.
+68088530-7295-u	I think here you could write  ``` if location:    self._parse_state_and_zip(location[0], anchor_data) ``` and then get rid of `state_and_zip = location[0] if len(location) > 0 else None`
+68088660-7295-u	This could be an `elif`.
+68089309-7295-nu	This seems like a weird check, why is needed?  Is so we don't put the zip code into `anchor_data[KEY.STATE]`
+68089778-7295-u	I think this could be made more generic to the length of `address_city_list`, but feel free to discuss. I'm thinking something like: ``` if address_city_list:     anchor_data[KEY.CITY] = unicode(address_city_list[-1]).strip()     anchor_data[KEY.ADDRESS] = unicode(",".join(address_city_list[:-1])) ``` Thoughts?
+68089923-7295-u	Do you want a space after the comma?
+68090252-7295-u	We also have the same or similar code in both if statements.  We could potentially write  ``` if len(address_city_list) > 1:  # City and address outside of span     anchor_data[KEY.CITY] = unicode(address_city_list[1]).strip()     anchor_data[KEY.ADDRESS] = unicode(address_city_list[0]) if len(address_city_list) > 2:    anchor_data[KEY.ADDRESS] += "," + unicode(address_city_list[1]) ```  but I'm not sure if this reads as clearly as just doing and `elif` statement. 
+68091027-7295-u	I've also proposed a solution to this, and I think either would be fine. One thing to note is you need to be getting the city from `address_city_list[-1]`.
+67884106-7287-u	No need to put required=False for these. That's the default.
+67884488-7287-u	We'll need the instagram account id.
+67884826-7287-u	This type of key construction makes it impossible to have multiple Instagram accounts for one Account group. I know there's no use case right now for storing multiple Instagram accounts but I don't think we should build in that limitation. Maybe I'm just being paranoid though.
+67885117-7287-u	I'm not sure how useful this will be. We're always going to request all the permissions that our app is approved for.
+67885545-7287-u	Permissions should be a repeated field. https://www.instagram.com/developer/authorization/
+68057873-7287-nu	I don't understand why we are using vdatastore stuff in this model instead of making a vobject in the vobject lib and inheriting from that
+67766240-7282-u	should that 7 be a kwarg with default 7? Will allow us to override the call. 
+67767400-7282-u	If you're mocking the put do you need VGaeTestCase?
+67767851-7282-u	Instead of asserting the count is 1, perhaps you could assert that you get the proper post back. self.assertEqual(result, [test_facebook_post])   You wont be able to reuse that variable name though.
+67768705-7282-u	Perhaps also self.assertIsInstance(result, list)
+67775805-7282-nu	Seems like we can move the construction of `test_facebook_post` to the setup and just change the `postedDateTime` before the put.
+67755524-7281-nu	I'd remove the default here if we expect this to always have a value. Better than providing an empty string where we wouldn't want one.
+67755929-7281-u	Could this be a more descriptive name? I assume the `blocker` bit was due to the issue type and not the test case
+67759066-7281-nu	+1 this will fail with a cryptic error: ``` >>> "{}{}".format("") Traceback (most recent call last):   File "<stdin>", line 1, in <module> IndexError: tuple index out of range ```
+67759692-7281-u	also +1 This test name won't mean anything in a month
+67712055-7279-nu	Were we wanting to change the SDK files?
+67712098-7279-u	Presence builder is in the first line
+67713988-7279-nu	they will just get overwritten but it is all just doc string changes anyway
+67717397-7279-nu	Fair!
+67719415-7279-nu	I would revert this file. It'll be confusing to the next person who generates the SDK when they have 18 lines they didn't know were changes.
+67719620-7279-nu	This is literally the 1 line that matters.
+67604518-7277-u	This is in vtest isn't it?
+67772292-7277-u	https://github.com/vendasta/VA-vtest/pull/65/files
+67551641-7275-nu	Good job on a descriptive tag!
+67551826-7275-nu	You aren't passing any arguments to your deferred function.
+67551931-7275-nu	It would save effort to do this check before the defer.
+67552267-7275-u	But you just guaranteed that `account_group.facebook_url` is `None`. You need the listing, I think.
+67552369-7275-nu	yeah.. I messed up hehe. I was in a bit of a rush
+68092163-7275-u	This look really elegant, and it's super easy to read. However, my complaint is that there's a lot of duplicate (triplicate?) code. I would really prefer seeing a single modular method for this. Your `if` chain could instead add the social url to a list of kwargs to pass into `updateAccountGroupV3`
+68099888-7275-nu	I really like how you encapsulate this ? 
+68100273-7275-nu	? 
+68100682-7275-u	This will replace the social_url on the account group even if the user has already set it to something else. Will this be a problem? I guess the social_url should probably be the same as the listing we're tracking for that source..
+68111721-7275-u	That's fair. That's what I thought earlier.  I just can't think of a case in which they wouldn't want the two to be in sync.
+67538347-7272-nu	do we want to have a retry limit?
+67539105-7272-nu	or a min-backoff? or something?
+67375087-7266-nu	The docs state >Note that for very large time intervals (greater than 270 years on most platforms) this method will lose microsecond accuracy.  So, just be aware. 
+67215488-7259-nu	could be  ```python bad_attributes = [attr for attr in data.iterkeys() if attr not in self.ATTRIBUTES] ```
+67216067-7259-nu	or `set(data.iterkeys()) - set(self.ATTRIBUTES)`  C-OK
+67203665-7258-u	snake case preferred.
+67204755-7258-u	Are we going to refactor this method once the map reduce to pull in permissions is run, rather than having a multi-purpose function.
+67190799-7256-u	Can you add the suggested path to get this data instead? eg: The Permission data is available on the getService endpoint.
+67057626-7253-nu	Is there any concern that a user will auth their account after exponential backoff has ramped up. Resulting in not updating the reach quickly after authenticating?
+67023382-7251-nu	This test will past regardless of the value of the status code we put here
+66885485-7247-u	this comma is weird
+66861164-7243-u	Stick an "and" in this message: `{0} for {1} gave {2} response, and returned no results.`...
+66846012-7241-nu	SDK should not be in this PR  Try not to generate the SDK until new endpoints are on master.
+66847413-7241-nu	I'll disagree here. You need to functionally test your endpoint both as a rest call, and through the sdk. You shouldn't release your sdk to VPM until the endpoints are on prod (which is what I think Brad is really getting at), but there is no reason to avoid generating it, testing with it, and getting it PR'd beforehand. 
+66848743-7241-nu	@ckurz-va Generating it and merging it into develop will cause merge conflicts for anyone who is simultaneously adding new endpoints to be added to the SDK when they are based off master.  Not the end of the world but something I like to avoid.
+66856186-7241-nu	It's a very simple process to manage that conflict, (Pull master into branch, regen sdk, confirm your expected changes are still there) and exposes maybe people need to chat to make sure version numbers are incrementing correctly.  I personally like merge conflicts when people are working in the same space so conversations happen. As long as the merge conflict isn't spawning a TON of new work. Plus with a PR out, people who are watching the repo, which should include people currently working in the repo, will notice another team adding an endpoint, and can start the conversation on collaborating the vpm release and such before things get to master. 
+66866875-7241-u	why not `self.get_facebook_profile_permissions`? There might be a reason to do this that I'm unaware of.
+66866976-7241-u	capital "O"?
+66867377-7241-u	This logic doesn't look to me like it gives you any information about a Facebook Page.
+66867849-7241-nu	is this the only place we're getting permissions and storing them? Like even on newly created FB Users we're not saving permissions?
+66868117-7241-nu	Also isn't there a `FacebookUserService.fetchSocialPermissions` method?
+66868823-7241-u	We should probably just rename it to GetSocialProfileUserPermissions then.
+66869952-7241-u	No reason.  We can use `self`.
+66996580-7241-u	This could probably be bumped up one line to be with the other properties
+66830003-7240-u	I noticed pretty much every method here accepts `callback` and `callbackArgs` and passes them to the pipeline. Is there any reason you are not doing this?
+66830183-7240-nu	If we are just storing these in CS is there any reason to use `vobject` and `vdatastore`? Why not just use `ndb.Model`?
+66830290-7240-nu	If you are just returning the class name I don't think it is necessary to implement this method.
+66830476-7240-u	I don't know what "status" is. Maybe indicate that you are updating the `is_synced` property if that's what the method is doing.
+66831276-7240-u	You can just: ```python uberall_location[API_KEYS.LISTINGS] = directory ``` Unless you are actually updating multiple key/value pairs it doesn't make sense to call `update`.
+66831414-7240-nu	Why not just make this is a JsonProperty if that is what we are storing? Also are we using this for anything or storing it "just to have"?
+66831843-7240-u	Can you make it clear for each of these models what their purpose is? Why do we have two different models, what kind of information are they storing or keeping track of. This doesn't really provide me enough information.
+66832254-7240-u	Can you include a one line comment or something or each of these `if` conditions. It's not clear what you are doing or why in each of these blocks.
+66832665-7240-u	I believe you are missing a test for the case when a `sync_details_key` is not specified.
+66832694-7240-u	If you aren't doing anything in `setUp` you don't need to include it.
+66848477-7240-u	I didn't think you could have both required and have a default value for ndb.  Does vdatastore fix that?
+66849838-7240-u	Is  ``` is_synced: False sync_details_key_id = "some key id" ``` A valid state? Or does the presence of a `sync_details_key_id` indicate that it is synced? 
+66864266-7240-u	So then sync_details_key_id is always pointing at a `UberallSyncDetailsModel`? Any reason not to make it a structured property? Also, why would it change at this point?
+66802435-7234-u	Why is this method here? Also it doesn't build a key, just the (string) key name.
+66641991-7229-nu	why the key change?
+66642550-7229-nu	what's the `/` for in this string?  It's not a typo?
+66673705-7228-u	I'm 10000% unclear how this solves the auth problem you described.
+66806928-7228-u	Right! Makes much sense.  Maybe we could make it `content_dict = json.loads(response.content)`. But ya, :shipit: 
+66631712-7226-u	Extra indent!
+66800355-7226-nu	So we have 3 different apis we have to use to interact with Infogroup? Ugh. 
+66498659-7221-nu	? 
+66509364-7221-nu	Sometimes you have to be extra sure
+66479961-7220-u	I assume this number is from...411 themselves somewhere?
+66509896-7220-nu	I don't think we need this, do we?
+66511065-7220-nu	Normally no but this Url Spider is doing batching like the Listing Spiders so we needed to include it here as well.
+66511829-7220-nu	Ah okay, I wasn't sure if this was because of the batching or just an accident. Sounds good!
+66350371-7219-u	using the word 'reach' here is a little confusing
+66350479-7219-u	I'd like to improve this doc string, or improve the comments in this function. I can see people taking a long time to figure this function out.
+66161493-7208-nu	You mean `Unescapable, assuming due to '\' in review.` right?
+66144970-7200-u	you want to check if its expired or not if it is demo.
+66160792-7200-nu	why caplocks in the middle?
+66265868-7200-nu	Should this go with the global_sources_dict spreadsheet?
+66267554-7200-nu	Why are we filtering listings that belong to the account_group and to the partner? Shouldn't the account_group_id be sufficient? 
+66271726-7200-u	Visibililty seems incorrect for directory name. I assume you meant visibility?
+66271913-7200-nu	why are we shortening the import? Makes it more confusing in code later. 
+66272638-7200-nu	Do we want to protect from a large number of input docs? I can't remember the max number of entities that can be in a put_multi, but 1-1 with the input doc list could cause errors if a crazy amount of docs are pushed in. 
+66273573-7200-u	So this is only globally disabled sources? If the account group or partner has disabled a source, we do not remove the score for that source from the listing point score. Is that the intended behaviour? 
+66273936-7200-u	why the is_demo check? Wouldn't we want to avoid doing this work for all expired account, demo or not? 
+66274084-7200-u	Especially scared, since Core never deletes account groups, it just expires them. 
+66288823-7200-u	It is not the case =) I would like to see that change. 
+66289196-7200-u	expiry is only ever set for demo accounts.
+66289228-7200-u	@tbathgate-va likely remembers better. I believe an account group has a method that helps this. getCalculatedIgnoredSource? 
+66289342-7200-u	You are thinking about expiry on the account group, this is the expiry on the account. So we should be checking for both.
+66289457-7200-u	This aggregation gives me an error when trying to run in vconsole  ``` import elastic from elastic.documents.listing import ListingDocument  agg = elastic.AggregationBuilder.max(     ListingDocument.score ) ``` ``` ValueError: ('no idea how to unwrap the given propery_ %s', ```
+66289703-7200-u	That could be. I seem to recall when getting a deleted message from VBC, we expired all accounts on the account group, not just the account group expiry.  
+66290102-7200-u	You probably want to do `account_group doWork(WORK.LISTING)`
+66290870-7200-u	That would be a good choice. doWork for WORK.LISTING also allows a sourceId arg, which will handle enabled and disabled sources as well. 
+66319830-7200-nu	Where does this value of 290 come from? Some explanation should be here in the code.
+66326984-7200-nu	The origin of it is some formula like: Phone number = 50 marks Company Name = 50 marks address = 30 city = 10 state = 10 ...  Or something like that.
+66343633-7200-nu	I think you're going to need these scores to factor HyperLocalListings into the equation
+66343861-7200-u	at architecture they said there was a bug in this. @jrans-va or @bbassingthwaite-va would know details
+66344394-7200-u	Basically if there is an error at any point in your mapper, the documents that had been assigned to that shard will be skipped over on the retry... 
+66366292-7200-nu	Sooooo nitpicky: can you pluralize "account group" in the docstring?
+66367460-7200-u	In the next iteration this case would actually contribute to the "Citation" portion of the score, right?
+66367988-7200-nu	I'm pretty sure it enforces some magic (or at least it used to) while converting to and from "domain objects" (ie `Listing` vs `ListingModel`).
+66454836-7200-nu	What's this for?
+66087420-7199-u	The code to find the company name is duplicated now. Probably worth it to break it out and reuse it in `_scrape` just for maintenance.
+66137020-7199-u	I concur.
+66086706-7198-u	is this  ... testing a thing? Please clarify. ;)
+66135501-7198-u	can haz test pl0x?
+66152684-7198-nu	? 
+66654096-7197-u	dunno what the superclass does but you probably want to specify `ALLOWED_METHODS = frozenset(['POST'])`
+66654158-7197-u	Update the tags?
+66654179-7197-u	aw, you should use the "new" property syntax instead of these arg lists...  ``` account_group_id = vapi.StringProperty(required=True) social_post_id = vapi.StringProperty(required=True) ```  Then you can access them like `self.account_group_id` in the process method.
+66654256-7197-u	unit tests for this method
+66654478-7197-u	typo
+66654628-7197-nu	probably want to unit test these cases with entities where `socialPost.isError` is a factor
+65925367-7194-u	last time I was here I remember getting shot at for missing styles.  Might be easy to make this whole function snake_case? Or simpler, just make `source_list` camelCase
+65914677-7192-u	Just remove this line. There's a specific test case to un-comment, when Zomato starts supporting websites again.
+65625398-7187-u	Super trivial, but if you add a comma to the end of this dict, github wont show it as a line removed and added the next time someone changes the dict (like shareCount did here)
+65627584-7187-u	Do we need to fetch the the reactions for post twice. Question mark. Perhaps we could be a little smarter and only do the call once. unless there is something I am missing with requiring the number reactions to get the actual reactions? 
+65634860-7187-u	Extra space
+65715858-7187-nu	Should we also be supporting `YAY`? ![yay](https://github.com/vendasta/SM/blob/develop/src/static/images/reaction-icons/yay.png) 
+65716351-7187-nu	Nevermind http://heavy.com/tech/2016/02/yay-facebook-reactions-missing-where-why-dislike-confused-rejected-photos/
+65726446-7187-u	what does this variable actually do? Is this the maximum number of reactions we will fetch?
+65726556-7187-u	Very minor but it is a little unclear
+65609488-7185-u	It may be a good idea to exc_info=True to logging.error 
+65595297-7184-nu	regarding the above comment: these definitely originated from the Urbanspoon migration
+65438504-7180-u	When we add post.reactions will this need to be updated? 
+65269489-7175-nu	Why is `data.get('country')` passed in twice?
+65374127-7175-u	Isn't `directory_data` the data we are getting from uberall? But we are converting the country code?
+65121447-7169-u	typo `is_combined_po_box_indicator_with_number`
+65121590-7169-u	do you need this `else: pass` ? preferable to just let the iteration do its thing and drop the else case if you can
+65121679-7169-u	i like these comments and hope people keep them up to date. people will scoff at overcommenting, but i think these are super valuable ones because of the specificity of these low level operations. :+1: 
+65121893-7169-nu	kind of boggles my mind that this test class is a child of `GaeTestCase`. I understand the word `integration` is in the class name, and if this is testing anything valuable and appengine related, maybe we keep a few, but all the cases in this class seem like perfect candidates for pure unit testing?
+65121975-7169-u	you want your class name to be leading capital camel case, java-style. also again with the `GaeTestCase` comment
+65122271-7169-u	i can't answer that, i don't have a histogram of address structure class frequencies memorized yet. maybe someone who has seen more might be able to make a suggestion? @ckurz-va @jfingler-va  my feeling is that you've covered enough here to make this stronger than what it was, so even it's not perfect, it's still incrementally stronger and so that shouldn't stop it from going forward. documenting those unsupported cases here is valuable, if they become a problem, the next guy just needs to uncomment the problematic case and tdd without worrying about many externalities.
+65108016-7164-nu	O_o they give us back underscores in one of the messages? seems like something they'll fix and we'll still be erroneously checking for in a month
+65105715-7163-nu	i find it a little weird that deleting a review doesn't take care of deleting its child entities (comments) in a model hook.
+65101175-7162-nu	?  needing this decorator at all seems smelly
+65087868-7161-u	if this is just ```raise``` it should raise the last exception that was thrown. With the way you're doing it any traceback is lost. It's probably not a big deal in this case, but give it a try.  http://www.ianbicking.org/blog/2007/09/re-raising-exceptions.html
+65092384-7161-u	I think those 2 result in the same behaviour.
+65091654-7160-nu	The explanation here and whats in the query are a bit confusing -- we had Google+(10010) listings copied over to Google Maps(12120), and we don't want legacy ids on the Google Maps one? Shouldn't it be `src=12120` in the query?
+65082457-7159-nu	Did you want this to be the sandbox id or the prod id? Sandbox is 911, PROD is 915.
+65082533-7159-nu	Nvm. Just had to scroll down.
+65082984-7159-nu	Just a question: where do these magic numbers come from? And why UBERALL_PLAN_ID_AU1 is different from the one in settings.py: https://github.com/vendasta/CS/blob/ac99559bcc9b6c438fe630ab8bf678e72cda1840/src/settings.py#L700
+65083053-7159-nu	They are provided by uberall over their api. https://uberall.com/api/productplans
+64926708-7143-nu	Can't trust anything...
+64775053-7140-nu	Could/should we possibly do some cleanup here to prevent us from calling them again with this location id?
+64775339-7140-u	``` with self.assertRaises(InstagramAPIError):   InstagramMentionSearchManager.get_mentions_for_location('object-id') ``` Reads much clearer IMO
+64778689-7140-u	rasieees
+64766418-7137-u	should we note that this is the test cluster, but using ip so you can hit it locally?  
+64659925-7134-nu	Just curious about why one imports in a method like this.
+64665254-7134-nu	It may be a good idea to set up _retryCount 
+64742059-7134-nu	I love this pattern so much more, good call!
+64742195-7134-u	not sure if it really matters, but these calculations could be done in the else instead, then it's not being done if the account group was deleted
+64657990-7133-u	`reshares` and `likes` could also default to `0`
+64658225-7133-u	We're reusing the `post_stats` dict here, which might lead to confusion in the future.  Maybe something like... ``` dict_of_post_stats[post_id] = {    'likeCount': stored_post.likes,    'commentCount': stored_post.comment_count,    'shareCount': stored_post.reshares } ```
+64568297-7117-u	this isn't really `unavailable`, it's more `forbidden`
+64612197-7117-nu	if you are using logging.exception, you don't need `exc_info=True`
+64612375-7117-u	this if branch should be a  `['uberall', 'api_call', 'forbidden']` tick
+64479045-7113-u	You need to add an entry to `routes.py`. Can't believe no one mentioned this yet lol.
+64473063-7112-u	From https://cloud.google.com/appengine/docs/python/taskqueue/push/creating-tasks#naming_a_task ``` After a task is removed from a queue you can't insert a task with the same name into the queue until 10 days have passed. ``` can we adjust that?
+64437344-7111-u	Do you want to return `address_2` when `full_address` isn't present? 
+64438090-7111-u	I think it probably shouldn't be returned. But if you hear differently, `full_address` needs to be `strip`ed
+64066842-7103-nu	Minor, but I would move `published_time = None` to just before this `if` so it is more explicit what it will default to if an exception occurs.
+64101693-7103-nu	does the publish date always have `:` now?
+63959754-7096-u	Is it possible for non-numbers to be pulled into the `phone_number_field`? In that case I think `json.loads` raises a `ValueError`.
+63925297-7089-nu	I you don't provide a default value to `getattr` I'm pretty sure it will throw an exception if the property does not exist. I believe this would cause this to retry indefinitely, no?
+63927956-7089-u	Is it possible to get the `uid` and `pid` from the row and use `Listing.getById` instead (which does a key.get())?
+63928072-7089-u	Any reason you don't just call `listing.save()`?
+63933380-7089-nu	This is fine but you can also do: ```python potentiallyMissingInfoKey = getattr(listing, 'potentiallyMissingInfoKey', None) ``` If you don't specify default arg (`None` in this case) it will raise an exception if the property is not found.
+63902007-7087-nu	This could probably have a `verbose_name` to clarify its purpose.
+63902221-7087-nu	This one in particular is likely to make our app be in a very bad state. Currently looks like we fail 31% of the gets on postId due to application limit being reached... So we might need to find a way to cleanup / optimize some calls.  
+63783319-7076-nu	I was more thinking of just adding a `logging.debug("Formatting location data for account group...")` to the top of this method so that it would be obvious which account group any subsequent log messages are related to. I'm just concerned that in the error reporting we might see errors and not know which account group they belong to however I expect that would probably be present in the url/args.
+63616013-7072-u	Is `content` the `title` here then?
+63706666-7072-u	Do you know if using `in` over the page content is particularly expensive? Might be worth fetching the title content before calling `in` five times over it.
+63606946-7069-nu	typo in `ignore`
+63607355-7069-nu	It's probably not necessary to make an entire account group for this test, I'd rather see data passed directly to `__format_hours`. You could probably make a new test class. 
+63608230-7069-u	I would probably make this an `error` since ideally we don't want this happening at all and high visibility if it does.
+63608469-7069-u	If it's just a PyCharm warning, don't worry about it. If it actually won't let you call it, talk to Brad and see if there's a really good reason it's named that way.
+63610627-7069-nu	This looks good. There are three or four tests in `FormatLocationDataTests` (line 185) that would benefit from the change. Sorry for being pushy, but it doesn't make sense to create an account just to test this type of data.
+63611040-7069-u	I would argue this addition doesn't belong in `_format_hours` because it's not formatting.  Can we do the validation earlier?
+63568135-7067-u	``` re.compile("tel:(.*)\'").search(phone_tag).groups()[0] ```
+63380314-7063-u	Are `profile.common` and `account_group.common_name` lists?
+63384870-7063-u	You should be able to just `getattr(account_group, 'common_name', [])`.
+63347239-7062-nu	Probably not a value error here as that will just trigger another retry. I'm thinking for any non 200 we want to raise a PermanentTaskFailure with as much info as possible about the response (ie code and content) 
+63355248-7062-nu	you could write these tests with VTestCase
+63355572-7062-nu	I'm also fairly sure you can't defer an instance method, so when you do defer a task it's going to need to be on a `classmethod` and you may need to pass the review comment along too (or maybe just the key so you can get the comment again, on the off chance that it somehow changed) 
+63355951-7062-nu	The code below is already calling some kind of `update_review` method in the domain which might be a good place for that
+63530540-7062-nu	We should put some more details into this tag... specifically I'm thinking the spid and the review urlsafe key, like `review_to_google_my_business_review/<spid>/<review-key>`. The tag is appended on to the URL for the deferred task which can help greatly with debugging if something is breaking.
+63533202-7062-u	It don't think review.commentText will give you what you want. The commentText is on the ReviewComment which it doesn't look like we are getting here.
+63561086-7062-u	We should check to see if there is already a ReviewComment on the review instead of always creating a new one. This could get messy if the user hits the respond button multiple times.
+63253416-7059-u	``` entity ``` also ``` db ``` is kind of a confusing acronym in appengine land, could mean several things. could write ``` test_matching_review_is_saved ```
+63381747-7059-nu	This will break on non ascii characters.. ```python hashlib.md5('{}'.format(u"åß∂")).hexdigest() UnicodeEncodeError: 'ascii' codec can't encode characters in position 0-2: ordinal not in range(128) ```
+63390647-7059-nu	Stackdriver might be a good idea.  Personally I've given up on using the cloud console's log viewer in CS long ago. Just wait 15 minutes and search BigQuery. :)
+63392463-7059-u	You are deferring a task to run this pipeline. The `pipeline.start()` will create another task to actually call this run method. You can just return from this run method and let the pipeline complete instead of raising an exception. Are you counting on this pipeline to complete before you do something else?
+63552063-7059-nu	``` avoid circular : ( ``` ?  pretty sure if you import something inline, its obvious what you're trying to avoid, even if your comment is garbled
+63379588-7053-nu	I still don't like setting the default in the function header to anything other than `True`/`False`, or `None`
+63379672-7053-u	This entire function still doesn't do anything when you compare it to `_get_location_review_request_for_location_name`
+63414461-7053-nu	there is an alternative... `page_size=None` in the signature, `page_size = page_size or cls.MAX_LOCATION_PAGE_SIZE` in the body
+62932388-7044-u	you're not taking advantage of your self.locationModel cache here... what i'd prefer to see is the addition of `@cached_property` properties for `self.locationModel` and maybe `self.profile`... i.e. ``` @cached_property def locationModel(self):     return GoogleMyBusinessAccount.lookup_google_my_business_location_model(social_profile_id) ``` it's a webapp2 decorator but under the hood it's effectively this: ``` @property def locationModel(self):     if not self._locationModel:         self._locationModel = GoogleMyBusinessAccount.lookup_google_my_business_location_model(social_profile_id)     return self._locationModel ```
+63023966-7044-u	Would the same instantiation of a `GooglePlus` serve more than one request? If not, it doesn't matter. But I'm not sure exactly how that works.
+62884091-7042-u	UberallFailedToSearchForLocationException?
+62935101-7038-u	I don't think raising `NotImplementedError("This should never be implemented by BrownbookListingSearchCommand or subclasses")` is that unreasonable? But we should at least instantiate it here. This line is raising the class, not an exception.
+62935286-7038-nu	Looks like the `ListingSearchCommand` superclass already raises `NotImplementedError`, too.
+62113503-7023-nu	Why `getattr(matchDetail, 'company')` here instead of just matchDetail.company? When you don't provide a third arg as the default value, this function will raise an error if the attr doesn't exist on the object and the same is true if you just reference the field directly like I am suggesting.
+62113596-7023-nu	Same thing here; I don't think there is any need for using `getattr` here either.
+62115698-7023-nu	I don't like these new tests. Instead of ensuring that the correct elasticsearch search was constructed, they assert that the correct query JSON is build by the elastic lib, which is knowledge CS shouldn't need to know. It should just assume that if you build a correct `Search` object, the elastic lib will get the right data from the ES API.  I don't like the old tests' implementation either (using actual requests/responses) but I think the old test cases (based on their names) are valid. For instance: - `test_sourceTakesOneInput` - `test_includePoorListingsFlagHasResults` - `test_noLimitOnASourceSpecificQuery` - `test_resultsAreSortedByScore`  All of those names sound like meaningful test cases but now they are all deleted so it is hard for us to know if we regressed on existing behaviour with these changes or even in the future.  I would suggest modifying these tests to not run `get_query()` and do the assertions on the Search object. And I would also move them to a `LookupListingsGetListingsSearchTests` class which can be a pure unittest. Then, you could keep some (not all) of the old tests, still using GAE and requests/responses but just mock out the call to `get_listings_search` or even `get_query`; if this GAE test doesn't use datastore stub, it will still be pretty fast. This approach gives you coverage to know your ES query is constructed properly but also that your API endpoint is operating as expected.
+62059825-7022-u	You don't actually have to check pageType evaluates to True here since None will not be inside the list of strings
+61792535-7013-u	I think something like `TransientListingScrapeException` or something to that effect might be clearer as to what the exception means
+61792717-7013-u	`s/temporary/temporarily/` in the message there :)
+61792943-7013-u	If you make this exception a subclass of `CSExceptionInvalid` you also won't need to change any of the lockdown code to make sure they don't result in a lockdown when they occur
+61803551-7013-u	Yeah, I confirmed it in an interpreter... you don't want/need the square brackets... just `if any(indicator in content for indicator in temporary_invalid_listing_tag):`
+61770193-7004-u	I don't think guaranteeing this is worth the time it will take to fetch all the comments and convert to domain objects. I suggest just calling `ndb.delete_multi(review_comment_keys)` after the `review.delete()` call
+65083777-7004-nu	@achuo-va Just looking into a BlackOps issue that we've traced back to these changes. We're seeing a bunch of "transaction too big" errors when this code runs for listings with quite a few reviews (100ish or more). The reason is that this `lookupByReviewQuery` is happening inside of a loop over all of the reviews, meaning that we're doing potentially hundreds of synchronous queries here. Only posting this comment as an FYI - you basically never want to do synchronous RPCs inside of a loop.  Additionally, there's no reason to call delete_async() on all of the keys and then resolve the futures at the end - ndb gives us a `delete_multi` method that we can just pass a list of keys to and delete them all in a single call.
+61595087-6997-u	Constructing a BeautifulSoup object is pretty expensive. Could you set the `soup` as an instance variable so you can use it in `_scrape`  (or fall back to constructing a new BeautifulSoup object)?  Like in `_scrape` have ``` soup = self._soup or BeautifulSoup(content) ``` 
+61807609-6997-nu	According to @ckurz-va, this function should be as loose as possible with it's interpretation of whether the content MIGHT be a listing or not, so that the scraper will try on anything that might be a listing or might not be. That's why the sentence previously read "easily identifiable as a non-listing page" instead of saying "this is a listing page". It was a subtle hint... maybe the docstring should be more explicit about that... although that does seem like a lot of documentation duplication everywhere that we implement isListingPage.
+61812708-6997-nu	probably shouldn't be mixing strings and unicode strings here too. It is a url so it shouldn't be a problem, but it's still best to just use unicode in this situation. I would also take it a step further and make the line look like this ```python url = u'{}/info'.format(url.rstrip(u'/')) ``` or  ```python url = u'{}{}/info'.format(match.group(1), match.group(2).rstrip(u'/')) ```
+61762705-6996-u	very very minor: could use `collections.defaultdict`.
+61352059-6989-u	This shouldn't be encoded into utf-8 here because it's not leaving the system yet and not being used with a library that doesn't work with unicode, if there's errors because it's not encoded then the fix is probably going to need to be made in the test that is having errors, or around the specific library that is using the text. Also, since phone number isn't required, you might want to make sure index errors aren't going to kill the whole scraper by making sure the keys exist, or wrapping ```result[KEY.PHONE] = phone_result[0].contents[0]``` in a try/except IndexError that passes if there's an index error.
+61453422-6989-u	I believe what you want is ```result[KEY.PHONE] = unicode(phone_result[0].contents[0])```. NavigableString content is storing its content as unicode so the encode isn't double encoding the data, but it still shouldn't be encoded at all at this point.
+61353658-6988-u	I think you might be on to something. Wouldn't you just want to take the data from whichever of the two has the newer "version" field?  If this solution actually works, then the below line in the doc string for this function isn't really accurate and should probably be updated. "IMPORTANT! This should only be used during the AccountGroup/Profile creation process."
+61478030-6988-u	The way we're updating this record doesn't jive with the parent transaction. The profile model is already retrieved within the update method and is being put when the record changes.   The signature of this method should accept the profile and return it to the update method of the vAccountGroupModel for an asynchronous put. 
+61508413-6988-u	You can also use `assertIn` and `assertNotIn`
+61294401-6984-nu	I feel like some of these shouldn't be removed. Specifically `test_tweetLongerThan140CharactersIsRejected` and `test_tweetOfExactly140CharactersIsAccepted`
+61176621-6982-u	I think `:return: the street address part of formatted_address` or something like that would be clearer for this docstring
+61176986-6982-u	can `other_data.get(address_type)` ever return `None`? If so it'll cause this regex to be incorrect (None is formatted as the string "None" by `str.format`). Even if not I think it'd be clearer to explicitly use `.get(address_type, '')`
+61178023-6982-u	Both of these could be renamed to `address_components` and `other_address_components` or `additional_address_components`. I think it'd make things a little easier to read since `data` could be anything.
+61178262-6982-u	I think this will be ok. If an address component is missing it shouldn't get into here, and if it does it exist at the very least it will be an empty string from `_get_other_name`
+61180833-6982-u	comment above applies here too--the test name should describe the expected behaviour, and I can't tell what `stuff` is supposed to be without opening up the data file itself
+61181016-6982-u	minor typo (`keyword`) 
+61181256-6982-u	What happens if the zipcode is also in the street address? e.g. `Suite 123 12345 Testing Blvd, City, State 12345 USA`
+61350555-6982-nu	this should probably a raw unicode string ```ur', ({}|{})(,|$| )'.``` and above too
+61133765-6979-nu	I don't know if totally necessary but you could have a `_should_ignore_error` method that returns True/False if we want to ignore the error or not. Could potentially pass the error messages  you want ignored too or just have the method handle that.  If that method handled the tick and logging too it would make this code a bit cleaner.
+60970821-6973-u	Do memcache keys have a maximum length?  Because this key has the potential to become very large.  Maybe build the `plan_ids` string and hash it?
+60972210-6973-u	Change `'id'` to `API_KEYS.UBERALL_ID`.
+60972935-6973-u	Could add something like `vmonitor.tick('uberall', 'get_product_plans', 'missing'`
+60978075-6973-u	I would be tempted to add a non-optional "plan_id" argument to `_format_business_data`  I'd argue that the purpose of this method is just to format, not to validate.  We should add validation before we even arrive this method.
+60987261-6973-u	It might be helpful to include something like `Region not supported for {country}. Business will not be created.` and any other info you can think might be helpful if we have to debug this for some reason.
+60991227-6973-u	K it took me a few minutes to look through the code/changes but I think instead of this method returning _all_ the product plans (which is not really what we want) it should accept a `plan_id` do a `memcache.get` on _just_ that id and then, if it doesn't exist, do a fetch of all the plans and do a `set_multi` for each one. Then just return the one we actually asked for in the first place.  Moving the logic of parsing through the plan data to get the specific one we need in the view is not where it belongs in my opinion.  https://cloud.google.com/appengine/docs/python/refdocs/google.appengine.api.memcache?csw=1#google.appengine.api.memcache.Client.set_multi

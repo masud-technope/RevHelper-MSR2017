@@ -1,0 +1,100 @@
+17078036-1065-u	Minor - `self.urls.getCustomerPostsUrl` instead of hardcoding the URL string
+17131471-1065-u	I don't think we need this, since `self.hasResponder` is set to `false`, right?
+16918880-1060-u	Minor, could use `defaultdict(list)`
+17007128-1060-u	I think ```CustomerResponseViewModel``` would be more appropriate here
+17051416-1060-u	feedmodel is no longer used within the SocialPost object I had thought? This shouldn't be needed in the factory call.
+16755566-1058-u	We typically don't work directly with ```this``` in our knockout models as it's very easy to change the binding context of 'this 'in knockout.   Using self, is a convention to indicate that the binding context of this is the viewmodel so you don't have to think about what "this" is referring too. Most teams are following this practice. 
+16557690-1054-u	I think we've run into another one of those multi pull requests open issue. Passing the feedModel in should not be required here.  If you review the below which should be merged in soon, the feedModel is available on the $root model.  https://github.com/vendasta/SM/pull/1049/files
+15671118-1025-u	I realize we don't intend to set the flags from True to False, but a more "correct" check is `if dismissed is not None:`. 
+15675593-1025-u	Are you doing this to make url indexed?  I think it was a TextProperty to avoid the 500 char limit. 
+15675827-1025-nu	I'm agnostic when it comes to camel case vs. snake case, but could it at least be consistent for all of `context`? 
+15676052-1025-u	Even though shareContent() takes you to a different tab, could it use a similar safeguard against double-clicks?
+15384294-1021-u	for cases like this where there are lots of '%s', using ```"?{0}={1}&{2}={3}".format(API_KEYS.API_USER, 'ABC', API_KEYS.API_KEY, self.partner.api_key)``` looks cleaner
+15552962-1021-u	This might be a case for naming the arguments: `"?{userkey}={uservalue}&{apikey}={apikeyvalue}".format(userkey=API_KEYS.API_USER, uservalue='ABC', apikey=API_KEYS.API_KEY, apikeyvalue=self.partner.api_key) `
+15252173-1014-u	would it make sense to put this line under the ```if conversation:``` below. just feels weird to sort an empty object.
+14780805-1006-u	This *may* give you some problems in some browsers.  In some browsers the javascript engine will respect the mime type of ```application/json``` and do the parsing of the response body for you.  So, when you try to do this with a JSON object it will throw an exception.  In this case you're looking at ```responseText``` which might always be a string... So I might be completely off here, but I suggest verifying that this works as expected in Safari since that's where I recall running into this issue.
+14798024-1006-nu	Syntax consistency.  You've got a space before and after the ```:``` on the first two key:value pairs here, then just a space after for the next two.  I also prefer *not* quoting the keys in JS objects... but that may just be me.
+14798570-1006-u	Just `visible` is sufficient in my opinion... and remove that extra "i".
+14825070-1006-u	I would make these urls different values.  Your test cases for each of these respective calls lose a lot of meaning when they're all the same.  I'd suggest something like ```/fake/publishComment/url/``` etc.
+14826128-1006-u	MIssing ```;```
+14826134-1006-u	Missing ```;```
+14829870-1006-u	In an ideal world... this is another jQuery pattern we'd find a way to avoid... just not a fan of the jQuery-ui dialog at all.
+14882062-1006-nu	You should be able to upgrade to ```knockout-3.1.0.js``` without issue.  Also, for any strongly versioned JS files on VFF I recommend using the route prefix ```/vstatic/js/```.  This route has a much longer cache time specified for JS files that will not change.
+14487435-999-u	Is there a way to make these sourceIds less magical? 
+14488637-999 -nu	Hmmmm.  Wouldn't a more "correct" (pinky in the air) way be to have LinkedinSocialPost override this method? 
+14264437-996-nu	Note, in regards to checking of the scheme it would be more resilient to use urlparse.  EG: ```python import urlparse url = 'www.testing.com' parts = urlparse.urlparse(long_url) if not parts.scheme:   long_url = 'http://%s' % long_url  ```
+14524744-996-u	Minor but this could be moved up to the top of the file as a constant:  ```python ERROR_TO_DOWNGRADE = ["INVALID_URI", "ALREADY_A_BITLY_LINK"] ```
+14524928-996-nu	Any reason for the use of a while loop here? By convention a for loop should be favoured when iterating over a collection vs looping on a condition.  eg: ```python for current_url in urls: ``` 
+13866419-982-u	Please add exc_info to error logs, so that exception information is added to the log message. ``` logging.error(err.message, exc_info=True) ```
+13867091-981-nu	There could also be a system problem at bit.ly.  I'd recommend looking at all the places where shorten_links() is called and handle it the way FetchShortenedLinkHandler does it:  ```                 result, stat_code = shorten_links(long_url)                 if result:                     plan A for when the shortener works                 else:                     plan B for when the shortener fails ```
+13675109-979-u	suggestion, just for us to determine if the feed was deleted or not based on the logs: ``` if do_delete:     print("\tDeleting feed item %s" % item.title)     item.key.delete() else:     print("\tWill delete feed item %s" % item.title) ```
+13619134-970-nu	Since there is no more domain object, we should probably ```s/entity/account/g```.
+13620276-970-u	You might as well put this for statement inside ```if accounts:```
+13606087-968-u	In delete_account.html, dialog text is wrapped with a ```<p></p>```.  Should that be the case for all dialogs?  Also, how hard would it be to have just one "delete dialog" template that everyone just uses, but with different text messages? 
+13618425-968-nu	it feels a little weird to float an inline element here. As you are already applying styling to the ```<p>``` tag why not make it ```display: inline``` and remove the float?
+13673184-968-u	This should be changed to:  ```     <script type="text/javascript" src="{{ '/static/js/SM.Settings.js' | vurl }}"></script> ```
+13566066-967-u	Not a fan of this class name, as in its current rendition it has nothing to do with sso or authentication. Can re rename to PartnerLookupMiddleware? or something along those lines
+13658591-967-nu	A mock, shouldn't be ugly though. A mock is a standard part of unit testing and the code shouldn't be "distracted" by an import and a pylint check that is redundant.  Personally I find it much more clear to have all the imports at the top of the file and the mocks designated with a comment. As per the ongoing discussion, I feel our test cases / pylint - test target will be much easier to maintain if we globally disable some of these pylint checkers.   On Tue, Jun 10, 2014 at 11:51 AM, Roger Blum <notifications@github.com> wrote:  > In test/mgmt/account_model_test.py: > > > @@ -40,36 +40,53 @@ def setUp(self): > >          self.account = self.create_account() > > > > @jredl-va <https://github.com/jredl-va> Please have a look at our test > code. Putting the import statement immediately before the mock, and > preceded by the pylint: disable=W0612 is standard practice, and I happen > to agree with it. For the cost of some redundancy and a minor transgression > of coding standards (remember, imports are not *required* to be at the > top of the file), the ugliness of creating a mock is gathered together and > made more clear. > > — > Reply to this email directly or view it on GitHub > <https://github.com/vendasta/SM/pull/967/files#r13608529>. >
+13448408-966-u	Core is now giving us an informative message in CSApiException, so it should be used in the logging.exception() and perhaps in the gritter presented to the user.  Have a look at my comment for the bug from May 20th.
+13449212-965-nu	I think that "cache_ajax" would be easier to understand.  You should also add this new parameter to all places where SMAjaxCall is called.
+13156872-953-u	I'm a little confused.  The stack trace shows that a DownloadError is raised, but you are catching an ApplicationError.  In _get_fetch_result (urlfetch.py), an ApplicationError is being caught and then a DownloadError is being raised.  Shouldn't you be catching a DownloadError here?
+13185117-953-u	Note, that a "download" error is typically caused by the url fetch meeting the system imposed deadline of the fetch service of 5 seconds. If we are encountering this error, the deadline of the fetch should be increased.   ```python response = urlfetch.fetch(self.url, deadline=60) ```
+13185168-953-u	As per Rogers comment I would rather see you explicitly "catch" the DownloadError.
+12970430-948-u	@aknox-va is always on my case about code like this, and would want me to write it: ``` account_groups = [     registration     for registration in registrations     if registration['uid'] == 'vbc' ] ``` I'm still of the opinion that this is a coding pattern for hipsters and has an RPN-like feel to it, but it is growing on me.
+12976787-948-u	:+1:  I mostly like not having to write/see ```account_groups = []```
+12949829-946-u	Note, this looks like it was existing code, however if a json response is to be returned the correct mime type to use is `application/json`.
+13087643-946-nu	If I remember correctly, ```content_type='text/plain'``` was added as IE (not sure which version) didn't like "application/json" as response. https://github.com/vendasta/SM/blob/develop/src/app/views/base.py#L165 
+12957571-945-u	This method is kinda silly.  I assume that the method ```social_post_comment.fetch_comments()``` does the same sort of param validation you're doing here.  So why wrap it?  Just for a nicer name?
+12957967-945-u	I would rename this class ```GetSocialPostHandler```.  ```GetPostHandler``` is just confusing.
+12958938-945-nu	I know you didn't change this, but same comment here about Handler names.  More specificity (particularly when the main descriptor is "Post") is really helpful to figure out what this handler actually serves.  In this case ```SocialPostLandingPageHandler```.
+12959625-945-nu	Are you certain that the profileImageUrl never has any query params on it already?
+12960245-945-nu	What is ```.profile-name```?  An H2 (if so then you don't need this rule)?  Something else (then why isn't it an H2)?
+12961511-945-u	This would be ```$LINK_COLOR```.
+12961554-945-u	Not a color in our current palette.  ```$PRIMARY_BORDER_COLOR``` is ```#DADADA```.
+12966821-945-u	Should be ```$TERTIARY_FONT_COLOR```.
+12966949-945-u	Should be ```$SECONDARY_BACKGROUND_COLOR```.
+12967055-945-u	Should be ```$TERTIARY_FONT_COLOR```.
+12967185-945-u	We've been indenting all KO flow control blocks for ease of readability.  So this should be: ```html <!-- ko ifnot: loading -->     <div data-bind="template: { name: 'post-profile-template', data: post }"></div> <!-- /ko --> ``` 
+12967345-945-u	We've been running into problems with IE when the ```attr``` elements aren't quoted.  For IE safety this should be ```<img data-bind="'attr': {'src': fullSizeProfileImageUrl() }" />```.
+12967533-945-u	Quote ```data-bind``` keys.
+12978951-945-nu	I'm assuming that SocialPost is to be treated as an abstract class and the factory will only create FacebookSocialPost, TwitterSocialPost, etc.
+12905978-942-nu	I'm a fan of doing ``` used_blobs = [     blob      for blob in blob_info      if blob.get(KEYS.SERVING_URL) in text ] ```
+12696197-936-nu	would it make sense to include ```%s<post_id>/<return_to>``` in ```URLS.ACCOUNT_POST``` variable for consistency?
+12427714-925-u	If this returns the service's name then I think `self.service_name = ...` might be more appropriate.
+12428066-925-u	Is this used anywhere? I can't find it. Also seems unnecessary since you could just `leads|len`
+12428115-925-u	I find it odd to pass a "placeholder" empty value here (and for `leads_responses`). Why not just specify it as an empty list or null arg in the js code?
+12432173-925-u	Instead of having two binding here, you could have only ```truncateText``` binding and in your custom binding handler have ```init``` to initialize with initial value. Most probably you might be able to do ```init: function (element, valueAccessor, allBindings, viewModel, bindingContext) { view_more_expander(element); }```
+12434268-925-u	If you are following convention that is fine. Technically the convention is to use camelCase in JS and snake_case in python. I don't believe there is any particular reason to declare them in or outside init(). Personally though I find I sometimes need to declare event handlers inside init so they have access to `self`.
+12230179-923-u	Instead of iterating over the items you can just assign directly: ```python country_list = COUNTRY_CODE_DICT.items() ```
+12230279-923-u	Minor, but I would simplify the above two lines to: ```python country_list = sorted(COUNTRY_CODE_DICT.items(), key=lambda x: x[1]) ```
+12230504-923-u	I'm not sure how often this is done, or how big this dict is, however you might want to consider declaring a name to code map/dict (where `COUNTRY_CODE_DICT` is declared) so you can just lookup by key instead of having to loop through (potentially) the entire dict each time. ```python COUNTRY_NAME_TO_CODE_MAP = {name: code for code, name in COUNTRY_CODE_DICT.iteritems()} return COUNTRY_NAME_TO_CODE_MAP.get(country_name.lower()) ```
+12230936-923-u	You can just move this if/else logic into the for-loop above which will allow you to potentially avoid looping over all the keys, and also avoid looping over it again in the else section: ```python for code, name in states.iteritems():     state_upper = state.upper()     if code.upper() == state_upper or name.upper() == state_upper:         return code ```
+12231017-923-u	Minor, the `None` is unnecessary since `get` returns it by default if value not found for key.
+12231147-923-u	Why are you using `slice` here instead of just assigning choices to data?
+12235362-923-u	You could also use OrderedDict from the collections library here
+12236281-923-u	if the ```if country:``` is removed, then ```state_list = []``` also isn't needed
+12236510-923-nu	I'm not great with javascript so I'm not 100% sure on this, but I think we need to be careful with rebinding elements here. account-fields seems fairly general, but the countryStateViewModel doesn't apply to every account-field I'm guessing.
+12247450-923-nu	If we are getting `account-fields` by id there should only be one on the page, correct? Or do we have multiple elements with the `account-fields` id (hopefully not...)?
+12068780-917-nu	why do we have to pass ```$data``` here?
+11741531-908-u	this back_url variable doesn't seem necessary. I would rather this written as ```params[UrlKeys.BACK_URL] = self.request.GET.get(UrlKeys.BACK_URL) or self.wl_data.get(WL_KEY.AA_EXIT_LINK_URL)```
+11741574-908-u	same with back_url_text ```params[UrlKeys.BACK_URL_TEXT] = self.request.GET.get(UrlKeys.BACK_URL_TEXT) or self.wl_data.get(WL_KEY.AA_EXIT_LINK_TEXT)```
+11815593-908-u	 You could use ```{{ back_url_text }}``` here since the logic on deciding the text as "Logout" is already in base.py
+11509008-900-u	BaseHandler already has 'pid'.
+11395523-891-u	I think it would make more sense if this were  ``` result = shorten_links(long_url) or {} short_url = result.get(long_url, long_url) ```
+10903022-875-u	Should we check on ```e. statusCode=409``` and do ```logging.info(e.message)```?
+10575168-863-nu	shouldn't ```doc_api_user``` be sm too?
+10666620-861-u	I prefer ``` hidden = bool(expiry_str) if not hidden:     expiry_str = datetime.datetime.utcnow().strftime(KEYS.ISO_DATETIME_FORMAT) ```
+10667063-861-u	```blob_info = [{'blobkey': key, 'serving_url': url} for url, key in blob_keys.items() if url in post_text]```
+10667451-861-u	this seems like a good place for ``` message = 'Scheduled successfully.' if parsed_post_datetime else 'Posted successfully.' ```
+10307377-851-u	You meant to say unauthorized twitter account so it should ```hasUnauthedTwitter``` ?
+9886676-836-u	sets don't always work for objects though, if the comments are objects then they will require ```_eq_``` to be implemented
+9886912-836-u	just do ```[comment for comment in comments if comment not in unique_comments]``` instead of having this function
+9887127-836-u	I don't think this is necessary, we sort all comments below with ``` if is_allowed_twitter_post and len(feed_item.comments) > 0:                   feed_item.comments.sort(key=lambda m: m.get(CS_KEY.SOCIAL_POST_CREATED), reverse=False) ```
+9887916-836-u	change this line to ``` posting_history_comments = fetch_posting_history_by_date(spid, oldest_mention_date) || [] ```  and you can get rid of ``` if posting_history_comments: ```
+9888167-836-u	```get(CS_KEY.TW_USER, [])``` should be ```get(CS_KEY.TW_USER, [{}])``` if you are going to try and access the first service on lines 211 & 212
+9888344-836-u	this whole if/elif could be just ``` conversations[reply_to_post_id] = conversations.get(reply_to_post_id, []) + [filtered_comment] ```
+9909531-836-u	Turns out I may have been right after all. The ```if a in b``` I believe checks for a reference to the same object which would be why you don't need eq implemented. Though I did forget that the object also has to be able to create a hash code, which dictionary does not implement
+9951012-836-nu	 ``` import operator posts.sort(key=operator.itemgetter(CS_KEY.POSTED_DATETIME), reverse=True) ``` will be faster
+9951416-836-nu	Isn't this going to skip the first page? ```      history, next_url = fetch_posting_history(spid, page_size=200)      while next_url is not None and not found_oldest_needed_post(history, oldest_posting_date):           history_page, next_url = fetch_posting_history(spid, next_url=next_url) ```
+9951804-836-nu	fyi, this error isn't the one roger and I were arguing over. This one is because it thinks you are using too many variables inside your function like ```all_twitter_ssids``` and wants you to try to reuse some instead
+

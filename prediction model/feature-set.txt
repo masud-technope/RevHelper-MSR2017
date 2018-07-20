@@ -1,0 +1,28 @@
+RevHelper Model
+===================
+
+Dependent Varibale
+-------------------
+className
+
+
+Independent Variables
+----------------------
+**Textual Features**
+ReadingEase		
+ReadingEase(NL) 
+StopwordRatio			
+StopKeyRatio			
+QuestionRatio	
+CodeElementRatio			
+ConceptualSimilarity			
+
+**Developer Experience Features**
+AuthorCommitsFile	
+CommittedTwice	
+TotalAuthoredCommits	
+ReviewingTwice	
+ReviewedCommitsFile	
+TotalReviewedCommits	
+ReviewedPRs	
+ExtLibSimilarity				

@@ -1,0 +1,99 @@
+30041882-1224-nu	I don't think we need `if` here, just `return self.wl_favicon` will do.
+30137052-1223-nu	I thought we were going to remove clientTags from core to migrate over common authenticated social accounts. Are we going to do that later or this is the way we will be moving forward with?
+29720657-1215-nu	is there a difference between `TEMP_SPID` and `DUMMY_SPID`?
+30062001-1215-nu	Microsite is imported as MicrositeModel which is a vObject class. We find this naming a little confusing. We had to take a closer look at the models/microsite.py file to make it clear in our minds what is what.
+30082243-1215-u	You are accessing a private variable here and ndb provides a public accessor method: `microsite_key.namespace()`
+29594235-1211-u	Does having both `get_async` and `get_result` in the same line actually have any benefit over just `get_result`?
+29594395-1211-u	I more mean, can't you just drop `get_async` here?
+29626353-1211-u	Instead of taking the first item from `host_slugs` list, you might want to take first item which does not have value in `redirect_hostslug`. If there is a value in `redirect_hostslug` that mean the hostslug redirects to the url that's in `redirect_hostslug`.
+29626816-1211-u	I see that `host_slugs` that is passes here is filtered with `redirect_hostslug==None` in `/internal/site.py` but the in the above `build_add_review_url_from_slug` method does not get filtered host_slugs. This is bit inconsistent, may be you should put the filter in these method or have different method that does that for you?
+29376698-1208-nu	Any reason these two need to be in seperate scripts? Also, we already use it everywhere else so why not here, but I think the `type="text/javascript"` is unecessary as it is the default type: http://stackoverflow.com/questions/14323376/do-html5-script-tag-need-type-javascript
+28998374-1202-u	should this be `microsite-demo` instead of `dev`?
+28825772-1195-u	I think you can just use `fetch(1)` here?
+28837003-1195-u	I'd prefer to see any new APIs written using the vapi property style, i.e. ``` class GetReviewUrlApi(InternalApiMixin, vapi.ApiHandler): ... pid = vapi.StringProperty(required=True) review_id = vapi.StringProperty(required=True) agid = vapi.StringProperty() msid = vapi.StringProperty() ```
+28837132-1195-u	I'd rather return this as a keyed dictionary than a raw string like this. Otherwise, we would have to break the API to add any more return values in the future. i.e. `return {'reviewUrl': 'http://...'}` Also, we need a trailing slash on the URL to match the work done in the other branch.
+28837291-1195-u	`slug_query.fetch(1)` returns a list, doesn't it? You should just be able to do `slug_query.get()` though (it will return the first result of the query).
+28837330-1195-u	Ah, I see you are doing `slug[0]` in the return though.
+28837373-1195-u	`assertRaises(vapi.ValidationError)`
+28875438-1195-u	Yeah `get` makes more sense really I suppose.
+28882336-1195-u	`Unless otherwise noted, a 200 response code indicates success` is already prepended to the top of all the api docs.  This probably isn't worth changing at this point though
+28883957-1194-u	needs some clarification here `jrans_local__listing_source = 12000` `if review and review['sourceId'] != yahoo_local_source:`
+28522034-1189-u	Yes I think for `/<slug>/review/add/` there won't be any conflicts. Only concern is `review` as slug itself.
+28522451-1189-u	isn't everything up until ``` ?msid=msid&pid=pid ``` unnecessary? you could send a dictionary with msid and pid instead. 
+27502067-1172-u	LD subscriptions typically span 1 year, so they are both false for the first 9 months of that. For the last 3 months, it would just be `expiring`, and after the year, they are both true. `expiring` is just there so that we can render a sort of warning message to poke them to re-subscribe.
+27268306-1171-u	Typo: `Base handler to upload Blobs into the Blobstore`
+27254056-1170-u	`and that it has a more info tab association`?
+27254235-1170-u	Nitpick: `TestIsValidMoreInfoTab` 
+27254588-1170-u	Typo: `...false_is_returned`
+27254646-1170-u	Typo: `...exists...`
+26536318-1158-nu	@utandukar-va the reasoning is that all products will be saving all info about AccountGroups from now on.  The major change with using vObject to do so though is that you will not need to update your representation of that data until you wish to use it.  So, we'll be able to add new fields in very quick iterations but individual products will only need to update their copy of the AccountGroup vObject when they wish to start using a new field.  Now no data migration will be necessary to start using it either.  You simply update and all the data will already be there.
+25737161-1151-nu	Could reduce this a bit by using defaultdict. Not totally sure what the implications are by using it, but I've seen it a lot in our code. Thoughts? ``` syncable_services = defaultdict(list) ...         for account in accounts:             syncable_services[service_type].append(account) ```
+25696950-1149-u	This one you might might need as it doesn't look like `AuthenticatedAdminView` has the whitelabel middleware (although maybe it should)
+24510379-1128-u	Rather than importing vapi here and raising a validation error, can we change this to ```raise SomeException''' instead.   Within the vapi usages it will become a try / except block on the expected error to raise the validation error. 
+24510471-1128-u	```python try:     args['host'] = get_host(pid, partner_host, market_id) except SomeException:     raise vapi.ValidationError('your message') ```
+23779738-1116-u	perhaps could simply be:   ``` return self.expiringStatus() === 'expired' ? 'Expired:' : 'Expires:'; ```
+22689254-1085-u	Maybe `bool(json.loads(self.images))` here just to keep the 'Returns True or False' bit true or `return bool(what you have now)`
+22471381-1078-u	Should you mark this comment with `TODO` or something?
+22471586-1078-nu	Can you make the two `MicroSite` / `Microsite` spellings consistent?
+22471868-1078-nu	Some more spellings (`MicroSite`) that might also be inconsistent after a previous comment of mine (here and line 105 above).
+22472790-1078-nu	Do you only notify if there is a `job_id`?
+22473053-1078-nu	Could probably do a `HEAD` here.
+22473131-1078-u	You're doing an `abs()`, so you can just compare on the positive range. Or drop the `abs()`
+22473177-1078-u	These two lines are a funny formulation. Why not just raise the ValidationError directly?
+22473489-1078-u	`slug_suffixes_to_try`? Slug is getting overloaded...
+22473855-1078-nu	Do you prefer this to the `self.abort(404, 'My message')`? I prefer `self.abort()`.
+22473953-1078-nu	I think this was in place because something in the API response was exposing the apiKey. Is this no longer possible?
+22474064-1078-u	or `slug_suffixes`
+22497058-1078-nu	It's pretty non-obvious, but the VApi friendly way to write the messages in the `validate_arg_*()` methods is to do it knowing that the `Arg "identifier":` will be prepended.  So in this case, something like: ```python raise ValidationError('%s already exists.' % customer_identifier) ``` 
+21831434-1066-u	I meant a `get_ld_activation_date(syndication_orders)` function and `get_ri_activiation_date(ri_account_future.get_result())` function.  The way you have them sectioned off and commented makes them seem like they should be in separate functions anyway.  If you return None instead of raising an error, the end result would be getting more stats not a 500.  Which should never happen anyway as it's expected they have these values already.
+20796972-1053-u	I'd vote for this being `recent_syndication_order` or `recent_order`
+20808126-1053-u	the core api returns this as  `syndicationOrderStatusActive`
+20813445-1053-u	The `operator.is_active` should be last as it's costly to do, so if we don't have to we shouldn't
+20813700-1053-u	The `get_account_group` and `fetch_product_pid` can be done asynchronously here
+20878349-1053-u	From here `http://microsite-dev.appspot.com/_ah/stats/`  ![screen shot 2014-11-25 at 11 15 25 am](https://cloud.githubusercontent.com/assets/6391814/5187728/c5d2d1d8-7494-11e4-977c-9c7cc3f6bbca.png)   you can see there's 6 urlfetchs that could all probably be done in parallel.  There's also major downtime caused by cache misses, but that's another issue.
+20886298-1053-u	I was thinking you could use `getAccountGroupAsync` and then the `fetch_product_pid` wouldn't have to be async. But as you have the account group here, the account group has the rm pid on it (which is just the pid or vbc pid) so you can use that instead of doing the fetch on line 107
+20890254-1053-u	After talking with @jrans-va it looks like you can just add the `vstats.api` module to their sdk gen and it will add the endpoints  to their sdk.  There was a slight problem of that as in vstats the required/allowed args are duplicated, but that should be a pretty easy fix.
+20974539-1053-u	kind of odd place to put this, isn't it? even ```app.domain.__init__``` seems to be a better place  IMO
+21006134-1053-u	I don't understand the need for this object. it seems like it's just wrapping `lookup_syndication_orders_async(self.agid, page_size=self.page_size)` and making it more complicated
+21006155-1053-nu	same as the SyndicationClient, it doesn't look like this is providing value anymore and can be removed
+21036238-1053-nu	The recommendation was that a tech debt be logged to move all of this in to ElasticSearch once it's ready to go.
+21094495-1053-u	Could this be replaced with the `serialize_datatypes` method in vapi? `vapi.handler.ApiHandler#serialize_datatypes`
+21094796-1053-u	Vapi now serializes the response so that any params that end in DateTime into actual date time objects that can't be dumps'd by the standard python json serializer
+21095057-1053-u	I'd also prefer for the calls to this function actually call `json.dumps(vdata, default=desrializer)` instead of calling this function.  For something this simple it seems better to me to have the transparency of requiring a separate deserializer instead of doing that here.
+21095069-1053-u	I don't see usage of `ISO_DATE_FORMAT` anywhere.
+21095599-1053-u	It should be `sm_account` instead of `repman_account`.
+21095666-1053-nu	Does this kick off the  `get_ld status`, `fetch_listings` and `fetch_synidication_orders` all asynchronously all at once? That's pretty cool. :+1: 
+21095734-1053-u	@utandukar-va @cdaviduik-va I think this is where you were going to use `ISO_DATE_FORMAT`
+21105527-1053-nu	Technically you wouldn't need to use the async method if you're putting it in a tasklet. ``` @ndb.tasklet def get_listing_distribution_status_async(agid):     client = ListingDistributionClient(VBC_USER, VBC_API, configuration=VBC_CONFIG)     raise ndb.Return(client.listingDistributionGetStatus(agid)) ```
+20389670-1048-nu	`memcache_slug_for_msid`?
+20389802-1048-u	I think this should fall back to a lookup if memcache returns `None`. Probably logging a error/warning would be appropriate if that ever happened though.
+20389015-1046-nu	Might be nicer to use `assert_has_calls`, but this works fine
+20390521-1046-nu	The 2nd param there is actually a kwarg. Should probably be doing do `@mock.patch('app.domain.cleanup.delete_microsite', new=mock.MagicMock())` in case the patch signature ever changes if we update mock
+19950497-1043-u	All of these `new X(...)` statements can go in the `beforeEach()` and be assigned to `self`. It'll reduce the test code size by a lot.  If you need special initializations for certain tests, each `describe()` block can have its own `beforeEach()`.
+19975334-1043-u	Oh; I didn't realize DashboardItem was immutable. No problems then. :+1: 
+19554173-1026-nu	Does `wl_product_name` has market specific product name too?
+19416959-1019-nu	What is `data.location.percent`? Can you extend `DashboardItem` to `DashboardItemChart` and use chart one there?
+19419275-1019-nu	never mind got the answer for `percent`.
+19029302-1014-u	You could replace this list comprehension with `filter(None, profile_fields)`. Using `None` as a predicate function with `filter()` only keeps truthy values.
+18659049-1005-u	Do you need to protect against `self.latestSyndicationOrder` being `undefined` or `null` here?
+18668652-1005-nu	I like this way better `(self.syndicationOrders && self.syndicationOrders[0].recipients) || {} `
+18532235-998-nu	apiKey probably should be required though... I mean they need it to access any of the apis right?
+18480981-996-u	Can you just add a comment indicating what this matches and, if possible, a link to where you got the regex from? Does this require the url starts with `http`?
+18404886-994-nu	Can there be a case when we created an account group from `create_microsite_entity` and we get here then there still no account group in vbc because of some delay in account group. 
+18404954-994-nu	Also I think we should have removed this piece of code as we are already creating account group in `create_microsite_entity` if it's not there. Its just a concern why it was there initially.
+18397078-991-u	Could `columns[1]` be None?
+18412416-991-nu	Minor, but at this point we might as well just use `columns[1][NAME]` if `get` returns `None` it's still going to raise a `KeyError`.
+18412494-991-nu	Same as above. Should probably check `columns` is the length you are expecting.
+18486268-991-u	or ``` dimensions = MSID_KEY if use_msid_dimension else 'ga:date' ``` to avoid assigning value again to dimensions variable
+18226627-986-u	I suggest using the ```VGaeTestCase``` from ```vtest``` for new test classes.
+18035430-983-u	Empty lists evaluate to false, so no need for the `len()` here. Same as in `get_formdata()` above.
+18035534-983-u	I did this for awhile until I came across `enumerate()`. You can re-write this as: `for i, _ in enumerate(self.hostslugs):`
+18040508-983-u	there are other exceptions that can possible be thrown such as ```InvalidSlugException```. shouldn't those be handled as well?
+18042279-983-u	I don't think we should be using this `AdminEditForm` since it mixes with the VForm request handler and our BaseHandler for, in my opinion, unexpected results. Also because the `VFormHandler` defines a `dispatch` method the `AuthenticatedEditSiteView` one doesn't get called so our middleware is not executed. I'm not sure how using `AuthenticatedEditSiteView` benefits us for rendering vforms.
+18043578-983-u	If you want to reuse this in multiple methods I think I would prefer something like: ```python @property def hostslugs(self):     if not self._hostslugs:         self._hostslugs = [hs for hs in lookup_hostslug_msid_mapping_for_msid(self.pid, self.msid) if hs.redirect_hostslug is None]     return self._hostslugs ``` Then we don't have to worry about what order the methods execute. Also I think it is a bit easier to read.
+18043668-983-u	Ya `enumerate` is sweet. I agree would be useful here and above.
+18043766-983-u	Minor, but probably just declare `var $this = $(this)` so it doesn't need to be recomputed every time.
+18049405-983-u	I find `check` doesn't really indicate what you are checking. Maybe something like `does_hostslug_exist()`.
+18050875-983-u	Did you try putting this in `pre_process_hook`? I think that might be more appropriate for this because then the middleware would have run already. We should probably avoid looking up data before we have verified the msid/pid are valid. I might try to move the stuff I did into `pre_process_hook` as well.
+18051110-983-u	I don't think you need this check at all. If `self.hostlug_mappings` is an empty list it just won't iterate over anything but the code below still works.
+18051605-983-u	`enumerate` gives you an index and the value so you might want to: ```python for i, hostslug_mapping in enumerate(self.hostslug_mappings) ``` Just a bit cleaner than `self.hostlug_mappings[i]`

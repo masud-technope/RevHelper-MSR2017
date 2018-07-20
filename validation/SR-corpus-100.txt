@@ -1,0 +1,87 @@
+46473628-2435-nu	should this be `query.add_filter(...`
+46624358-2434-u	Since this already lives in the ``` repcore ``` module, I don't think you need to add ``` fromCoreServices ``` to the method name.  This should also probably be snake_case, unless there's a good reason for it to be camelCase.
+46624933-2434-u	It would be more pythonic to write  ``` return "%d star %s" % (rank, content) if rank > 0 else content```  And, actually, ``` % ``` is deprecated in python 3.  (Even though I always forget to do this) So, it should be: ``` "{0} star {1}".format(rank, content) ```  But neither of these things is that important.
+46625988-2434-u	format also accepts kwargs which makes it possible to give some context like ```"{rank} star {content}".format(rank=rank, content=content) ``` which is neat sometimes (and just overly verbose other times).
+46424845-2432-u	if exceptions is an empty list, it will be falsy.  So you should be able to do ``` if exceptions ```
+46332169-2431-u	Not sure about this but we could probably just do ``` expect(socialCompose.isValidReviewShare()).toBe(true); ```
+46335437-2431-u	So just a couple FYIs here... If using ko > 3.0 (I think we all are) you can shorten this to `ko.unwrap` instead of `ko.utils.unwrapObservable`. The main reason to use it is when you don't know whether or not the variable you're testing is an observable or not, it will always return you the value.
+45884290-2412-u	By convention, kwargs go on their own line  ``` lookup_account(pid,                 srid=srid,                 customerId=customerId,                 account_group_id=account_group_id) ```
+45884427-2412-u	Could safely change customerId to snake_case
+45469078-2404-u	do you still want this `is_beta` flag? I thought the `is_feature_enabled` check was all you needed
+44474605-2367-nu	Could probably just use:  ``` self.vform_handler.context = json.dumps({     'accountGroupId': self.agid,     'partnerId': 'ABC',     'leaveReviewUrl': 'review.com',     'email': 'me@example.com' }) ```
+44474749-2367-nu	for readability, you could do  ``` my_mock = self.mock_function_in_setup('app.views.reviews.generate.ReviewGenerationVForm.account') my_mock.new_callable = mock.PropertyMock(agid='AG_123', ... ```
+44033431-2343-u	It looks like the review doesn't include the `agid` and specifies `rid` as `reviewId` so we should probably be consistent. I think those are the only two fields that need adjustment though.
+44062511-2343-u	The api key values used for comments here and below are the same right? Is it easy to move this into a `to_review_comment_dict` method? I'd prefer to see that instead of manually converting them in two places.
+43840975-2340-u	I wouldn't call this ``` UpdateAccountAjaxHandler ``` , especially if it's going to 400 because of the publish rating. SR probably has a bunch of ajax handlers already that 'update the account' in some way, but their names are scoped to their specific purpose. There's nothing wrong with calling it ``` UpdateReviewPublishSettingsHandler ``` or something more specific.
+43841262-2340-nu	why do this instead of check ``` is_review_generation_enabled_for_account ```? ``` is_review_generation_enabled_for_account ``` further requires that the account group has a presence builder account too. In our case I think our requirement for showing that form is no different from anything else to do with review gen, which all depends on ``` is_review_generation_enabled_for_account ```.
+43841378-2340-u	i think making them click save is pedantic. Instead, whenever the value of their currently selected setting changes, you could run updateAccount, show a spinner, and a gritter (success message) upon a successful update.
+43843034-2340-nu	I'd use mock Account objects instead of actual Accounts. You'll need to mock ``` put ``` and ``` getByAgid ```
+43901024-2340-nu	Using the datastore stubs etc that VGaeTestCase provides makes this more of an integration test than a unit test. True unit tests will mock/stub every interaction that's external to the item under test.
+43905277-2340-u	ajax routes are so rarely changed in practice (in my experience) that the benefit of doing this seems minimal. when you have the relative path in the javascript it makes the javascript easier to understand too. 3 months from now no one is going to remember what baseUrl is, and even if it was named something more specific, it always forces you to go find the handler that renders the page with this js and figure out what baseUrl is supposed to be anyway. I find that a lot more work than just ctrl+f on the relative url in your routes if you are thinking about replacing it.  I think using relative urls keeps all these files more readable too. Handler has less code, context has less crap in it, javascript model has less parameters, less variables.
+43909477-2340-u	Well self.rating being updated by the dropdown changed event is very anti-knockout when you already have a bind for it and could just compute it if the value of the option is not what you want to send. Also using events in general is often a ```$```ign that the right binds aren't being used (they have their place though), we can construct most of the behaviour we need based on what happens to the variables we've actually binded through subscriptions/computed observables. I think you've changed all this stuff though :+1: .  The suggested computed function was just to prevent the ajax from submitted if they had selected manual publish, but changed the auto publish dropdown setting. Looks like you disable the auto publish select if manual is selected so that shouldn't be a real problem.
+42778775-2326-u	ew to your field name, but i see you're following convention... I realize the reason for the "Flag" is just so vapi recognizes it as a boolean, but personally I'd rather see the whole thing camelCased than this mashup of the two
+42779061-2326-u	`rid`?!?!? :disappointed: 
+42779666-2326-u	this seems weird to me... I think `logging.error(str(e), exc_info=True)` might be more appropriate
+42261655-2316-u	I see you adding the `has_beta_flag` to the default request context but you aren't using it anywhere else in this PR to show/hide the "Respond" button.
+40808745-2274-nu	this fetchSocialData wasn't used anywhere
+40730935-2272-u	can just be `more` and apart of the `more > 0` if block
+39661504-2245-nu	Does this actually have to be mocked? I thought you could just say ```python settings.FULL_REVIEW_CONTENT_PIDS = [u'SRP'] ``` at the start of the function.
+36306584-2215-u	I know this was already here, but it would be great to use a constant like `LOCATION_PAGE_SOURCE` for the number.
+36306743-2215-u	Also, I believe we should be accessing the class level variable through the mixin and not through `self`.
+36309677-2215-u	Lets extract `source_id == 12000 or account.pid in GetReviewsMixin.FULL_REVIEW_PIDS` into a variable so this line can become clearer:  `review_content = review_content if include_full_review_content else review_content[:API_KEY.REVIEW_SNIPPET_LENGTH]`
+36309880-2215-u	Also, can we extract `12000` into a `FULL_REVIEW_SOURCES` constant like we do for PIDs?
+35802473-2206-u	I'd rather see the `BaseJsonHandler.render_response` sprout a `status_code` kwarg than this. Using the status codes will let the `jQuery.ajax` calls on the front end dispatch to success and error callbacks for you.
+35803297-2206-u	There's actually a class called `.view-details` in the file `src/steprep/static/compiledcss/scss/_common.scss` which you could rename, or simply use, so that this can be a span.  If this is left as an `<a>` tag the user will be able to use the browser's "open in new tab" features, which will totally break things.
+35807454-2206-u	see comment below... if you move this to VAPI this parameter simply gets marked as required. You can even use the property based VAPI definition, so it will auto-handle the conversion between camel case on the request, and snake case for the code... like so (on the class level):  `source_id = vapi.StringProperty(required=True, description='The source ID')`  then later, in your process method, instead of `args['sourceId']` you use `self.source_id`
+35808133-2206-u	You might still have to leave the self.agid assignment here because you are dynamically creating your HTML hooks for the extension, but this getCredentials function can go
+36191057-2206-u	Pardon my OCD, but the endpoint is `sourceCredentials/lookup/` but the handler is `GetSourceCredentials` - can we change the former to be `/get/` or the latter to be `Lookup...` ?
+36191789-2206-u	These definitely don't belong in `coresdk.keys`... I actually don't think they belong in any of our current keys files. I'd be happy leaving them as magic strings.
+36191928-2206-u	You should just use `vapi.NoAuthAjaxHandler` instead, it handles returning True from check_credentials for you.
+35432839-2205-u	`RequestContextClassTest`
+34894469-2195-nu	Such signature  ![doge wow](http://33.media.tumblr.com/0672edc6c5d84e8d26b6c87251206c5b/tumblr_inline_mz3gp86jLm1svqzj6.jpg)
+34391874-2170-nu	Would it be worth it to write a function map rather than hammering through all these `if .. in ..` checks every time `initialize_mocks` is called?
+34154574-2154-u	This was our very very first vapi endpoint in SR and it was done before we had the concept of internal vs external APIs (you'll notice the URL for it is /api/v2/notification/ rather than /internalApi/v2/notification/). So yeah, it should probably be moved. Thanks for the cleanup!
+34045107-2153-nu	Aren't your `\w\d` here redundant? `\w` will match digits.
+33971169-2148-u	There should never be a case where this is valid. What is this guarding against?  Why not just? ```  partner_host_name = urlparse.urlparse(partner_host_name).netloc ```
+33972423-2148-u	If all the tests pass without the if check, let's take it out; I agree that it seems unnecessary.  If it is necessary, I don't think it is good practice to is `is` for string equality checking, string instances aren't guaranteed to share identity in python. http://stackoverflow.com/questions/1504717/why-does-comparing-strings-in-python-using-either-or-is-sometimes-produce  Use == instead. Or even better, just check for a false-y value: if not netloc_partner_host_name:
+33974196-2148-u	Not that this is bad, but I wonder how much overhead this has compared to doing something like: ```python import re p = re.compile("^http://") if p.match(url):     pass ```
+33971600-2147-nu	It feels a little weird to dive into the call_args_list. That seems way we would do it with minimock.   Why not just:  ``` vbc_mock.assert_called_once_with(mock.ANY, ['ABC', 'DEF']) ```
+33830484-2146-u	You renamed this to $GREEN_BACKGROUND_COLOR, https://github.com/vendasta/SR/pull/2146/files#diff-a0c3907a7b41a9d6fc1aad1f2b12eedaR12
+33833661-2146-u	There's a pretty big difference between ```#333``` and either of your proposed values.  ```#333``` seems to be used very frequently within SR.  I suggest creating a new variable in the project here (not in ```_colors.scss```, somewhere specific to SR) and using it throughout.  There's just too big of a difference between the existing color and ```$LIGHT_GREY``` or ```$PRIMARY_BORDER_COLOR```.
+33834469-2146-nu	The existing color definitely has a fair bit of blue in it.  That being said, this entire section is for ```form#sign-in``` which isn't a thing on RepMan anymore...  So these rules probably don't matter at all.
+33357968-2124-u	No need to call `.keys()` here as `'key' in dictionary` works :)
+33169041-2118-u	`SocialCompetition` is it's own entity and `updateCompetitorsByAccount` doesn't put it, it just returns the updated `SocialCompetition`. You should proabably pull this out of this transaction so that it isn't cross group and make sure to put the return of your call here.
+33191593-2118-nu	I think we should explicitly check for `is not None` with these... I think an empty string for city/state might be valid
+32733611-2101-u	MagicMock to avoid the param and return value assignment in the test?
+32540746-2090-nu	Can't you just attach the `.primary-action` class to the link?
+32532676-2085-u	dat extra spacing before `else` :trollface: 
+32333031-2078-u	These could both be a `MagicMock` second parameter to `mock.patch`, to avoid taking the arguments in.
+31958760-2059-u	Little nervous to see updates like this coming in. I assume this was a transitive dependency brought in when you updated the `vautil` version?
+32122080-2059-u	This whole function can be factored nicely now: ```python @staticmethod def validate_and_normalize_phone_numbers(args, country=None):     """ Validate and normalize all phone numbers within the provided args. """     def _normalize(kind):         if kind not in args:             return         norm = lambda n: \             AccountValidationMixin.get_normalized_phone_number(n, kind, country)         value = args[kind]         args[kind] = [norm(n) for n in value] if isinstance(value, list) else norm(value)      kinds = [         API_KEY.ACCOUNT_FAX_NUMBER, API_KEY.ACCOUNT_CELL_NUMBER,         API_KEY.ACCOUNT_WORK_NUMBER, API_KEY.ACCOUNT_CALL_TRACKING_NUMBER     ]      for k in kinds:         _normalize(k) ``` (Remove functional idioms as you see fit...)
+32123197-2059-u	No need to create an object of `AccountValidationMixin` here, as the method you're testing is static; same with the test below.
+32138551-2059-u	Usually I have seen us not raise an error in this case, but wrap the non-list value that was pass-in in a list. At least, that is how it was done on Core's API handlers.  E.g. ```python if not isinstance(work_numbers, list):     work_numbers = [work_numbers] ```  That way we handle the case if it isn't a list without causing an error for the caller.
+31848680-2056-nu	Do we want to account for a failure being raised from `get_result()`?
+31171031-2036-nu	kind of dumb question, do you need ```style="display: none;"``` when you already set fadeVisible
+31176659-2036-nu	`$text_color`
+31176860-2036-u	can use `toBeTruthy()` here
+31176881-2036-u	can use `toBeFalsy()` here
+31177201-2036-u	This test actually doesn't have anything to do with `loadSearches` really. You should pull it out to the "initial values of knockout observables" section at the top of this file
+31253138-2036-u	this seems a bit odd, why are you using `rem`s here?
+31253224-2036-nu	again it seems weird to use `rem` here
+31168487-2034-nu	What is going on here? What was `error.id.substring(3)` for?  Might also be better to do:`$('input#' + id)`.
+30277574-2023-u	`if len(company_name) == 0` and just be `if not company_name`
+30144257-2017-u	There are going to be thousands of these (as repintel has "admin accounts" which don't have agids)... I know we've seen issues in MRs before that have too many unique counters, maybe we should add one more if check up front for `if account.hasAdminPerm or account.hasSuperUserPerm` and not bother logging the key with it
+30144590-2017-nu	I don't think you can do this partnerConfigId one because RepIntel still supports legacy market IDs for our V1 API. 
+30144913-2017-u	Is there a point to making a list out of the keys? You're only using it to check if the key is in the dict, which is just as easily accomplished by `if key in ACCOUNT_GROUP_MAPPINGS`.
+30149494-2017-nu	Really? That scares me. I think the check would be `if account.partnerConfigId != account.marketId`
+30152651-2017-u	This second if statement isn't needed -- it can just be added to the previous level with `and`.
+30152759-2017-u	Can be combined with the previous level using `and`
+29953556-2010-u	I think you might be missing some changes further down for employee twitter accounts. Specifically, we check against `twitter.linked` which I believe no longer exists?
+29953767-2010-u	Should `'MS'` be in this list as well? Or does MS not have social sharing?
+29260471-1999-nu	this is kind of weird... normal way to do this is just set a side_effect on the mock, i.e.  ``` def my_test(self, site_data_mock):   site_data_mock.side_effect = NotFound404Error ```
+29265940-1999-nu	Hmm, so basically you want to test that it throws the exception on `get_result` instead of `get_site_data_async`? I think this will work, but untested: ``` site_data_mock.return_value = async_util.futurify(mock.MagicMock(side_effect=NotFound404Error)) ```
+29193483-1997-u	isn't this exactly equivalent to `Account.updateUnique(account, customerId=customer_id)`?
+29194125-1997-u	you're ticking counters and stuff `test_account_not_found_ticks_counter` or something. meh not a big deal.
+29179988-1996-nu	Is this necessary? Won't the `check_success` exception basically say this?
+28930453-1990-u	let's not put this here... creating this mock for every single CoreServicesTestCase is unnecessary
+28930504-1990-u	bah i guess you probably can't because these are already mocked by CoreServicesTestCase? bleh

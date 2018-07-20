@@ -1,0 +1,281 @@
+62744495-1633-u	I don't think we want the `exception_message` to show unless we're on prod. Is this really what it does in other products?
+62745196-1633-u	Let's delete it. We'll see the exception in the logs, and the user does not need to see that.
+62745357-1633-u	There might be some logic to not set the error message in the context if it's prod cause I don't remember ever seeing an exception message on prod
+61884755-1625-nu	`account.account_group.account_group_id` is one of the best bits of code arround.
+61893042-1625-nu	haha is there no helper property on ``` account ``` ? this still makes me laugh though so w/e
+59757758-1621-nu	Why get the account_group_id off the request when it's a parameter?
+59936738-1621-nu	not sure how I feel about removing "ajax" from all these routes, I kind of liked that they were easy to identify 
+60442700-1621-nu	Everything will be ajax one day
+59425661-1619-nu	looks good
+58734224-1615-nu	@utandukar-va do you know if its possible to do this direct to github so we wouldn't have to care about caching? 0_0 or maybe we can fix this in a better way
+57978311-1611-u	double float left
+57978361-1611-nu	what does * html do
+57978541-1611-nu	im stupid this is the generated file
+56841121-1602-nu	:+1: 
+55392381-1595-u	Probably just do `hostname = self.partner`
+55394450-1595-nu	We should maybe have a more descriptive name for this... `is_recent_within_one_day` I guess it doesn't really matter since we only use it once and all the information is there but I don't feel like deleting everything I typed. ?
+55394592-1595-nu	Is using `all` overkill? I'm just wondering.
+55394716-1595-u	`search_summary = self._get_search_summary()`
+55395302-1595-nu	I'd rather keep the name `is_recent`.  The within one day should be obviously from the code.  Also if we change what recent is (eg. a twitter lead is recent if it's within 3 days) then we don't need to worry about changing the variable name.
+55395405-1595-u	I think you mean `hostname=self.partner.hostname` but I agree. 
+55396595-1595-nu	I like the idea we had with location page review and comments where we made a send method on the class and then let that do the validation.  I think this change can go up without it but I think at some point we should figure out how we want to structure these activities and do the same thing for each. 
+55032690-1591-u	Debugging?
+54960382-1590-u	I believe that you've got `labels` on here just because it's in the parent class' method signature.  You don't actually exercise that method though (no super call), so you should be able to omit it completely here.
+54960821-1590-u	I'd put a `u` prefix on this string to prevent potential unicode problems.  As a general rule of thumb I would recommend always using a unicode literal when using `.format()` or `%s` replacement.
+54252232-1588-nu	The issue is that it was calculating 25MB wrong, correct? I don't think this comment quite gets that across. This is a minor change though so not a big deal.
+54161741-1585-nu	There's a way to call uri_for and specify scheme and netloc `uri_for('page-name', post_id=post_id, _netloc=hostname, _scheme='http')` That said, I can't remember the last time I've seen us change a URL such that having the named references is really any benefit. It's kinda nice regardless.
+54171728-1585-nu	Oh yeah, we aren't within webapp2 (this is running within a task), so I guess we cant (or atleast I'm not sure how we could)
+53956484-1582-u	Could you pass in the datetime here? That way we never try to create a RSSFeedItem without a `posted_date`?
+53957313-1582-u	I don't know the whole workflow for creating these. Does this hang around for a while before it's put?  A few minutes shouldn't really matter
+52744659-1565-u	Is this supposed to be `'Social Post'` or `'Customer Post'`?
+52744766-1565-u	Is there some sort of constant that can represent `'SM'`?
+52745453-1565-u	Do we intend to leave this todo in the code?
+52745996-1565-u	Making this a `build_payload(token)` method would make this read a little cleaner and we could test that we build the proper payload. Would that be overkill? Thought I'd ask since I'm not sure
+52746196-1565-u	Should we do this now?
+50195956-1553-nu	0_0 Maybe add a comment? Or make a SuperAdminHandler with the explanation? This is kinda like a lie/super scary
+49091207-1540-nu	What does `query_deleted` mean? why would we ever use phone if its stale data?
+48268336-1539-nu	There's no state to this object (yet?), so I think this could be a bit nicer to read and to use (since you currently need to `new` this object to use it) by using something like the revealing module pattern. This guy makes the case for it pretty well using an angular service as an example: https://github.com/johnpapa/angular-styleguide#style-y053  ``` // Module interface return {   showLeadsBadge: showLeadsBadge,   ... }  // Module implementation function showLeadsBadge() {   ... } ``` You can flip the two sections if you can't use function declarations for some reason
+48268447-1539-nu	Is using an animation vs transition easier since we don't need a base class to transition from?
+50040982-1539-u	would call this ``` self.badges ```
+50041187-1539-u	Handler
+50041773-1539-nu	This is on every page handler now? Is it pretty expensive? It'd be nice to make the compose modal as lazy loading as possible
+50041861-1539-nu	should this thing really be a nav ko component?
+50042080-1539-nu	change the name of this js model/var from DashboardViewModel to AnalyticsViewModel or something like that
+50042559-1539-nu	about the feature flipper... is it still needed if you are keeping the analytics page? whats the plan for it getting turned on for everyone?
+50042801-1539-nu	could be put into the initialization of vcompose maybe? like this only happens when you click compose post, and vcompose doesnt try to render (loading spinner thingy) until we figure out this parameter for it
+50043006-1539-nu	Interesting number
+50044764-1539-nu	typo: accoutns
+50044904-1539-nu	Any benefit to this being in a template? doesnt seem like it
+50045537-1539-u	The logic in file is now officially mind blasting
+50045588-1539-nu	Whats this for?
+50045793-1539-u	ya O_o
+47161732-1535-u	Is this check really valuable?
+47163188-1535-u	?
+45914972-1520-u	Anyone know why there is a try/except nested inside a try/finally instead of having a try/except/finally?
+45916132-1520-u	ok felix
+45917342-1520-u	could we use restructured text format here to get the type hinting?  ```python """ :returns: whether or not the leads feature is enabled :rtype: boolean """ ```
+45917369-1520-u	I realize it's not super useful here, but it's a good habit to be in
+45928044-1520-nu	Does this _really_ need to be an exception? We've been talking about that at Monitoring COP lately. What's the actionable from this log item? If nothing, make this a warning or something imo.
+45928295-1520-u Make this a one-line docstring, to match the one above (or do the opposite)
+42392621-1497-nu	Was this not being used by anything?
+40718983-1489-nu	What's going on here? This is coming from core's API, we should be able to parse it using the regular strptime where we pass it the format. At the very least I would say that IF for some reason we need to use datetime_parser, that you should just be able to set the posted date to the result of it without recreating it...
+40722368-1489-nu	Fair enough.  We could probably update the core API (juuuust added) to return a better formatted datetime.
+39763451-1480-nu	move this down
+39406900-1474-nu	are there 2 versions of mock in SM still?
+39407088-1474-nu	Ya removing it's fine.
+39407144-1474-nu	wait, vtest no longer contains mock, but instead has it as a dependency?
+38135013-1461-nu	:+1: 
+38135038-1461-u	Should this be removed?
+38135087-1461-u	Too much whitespace
+37653344-1455-nu	Are we still `POST`ing something with this handler?  I thought all the Postman tests for this were `GET`s.
+37655417-1455-nu	In retrospect we could have left the old `<p>` tags in the page and removed this padding to get the look we wanted.  I don't feel strongly about changing it though.
+37656641-1455-nu	I thought SM was converted to a unified colour pallet, and that these were supposed to be variables.  I'm surprised to see even hex values here.
+37755445-1455-nu	Why are you getting only one page at a time and looping in js to get all the pages?
+37224089-1448-u	AccountModel entities are SM accounts, not account groups. You'll need to call .get() after build_key to retrieve the actual entity and be able to access its properties as you do below.
+37224365-1448-u	e.message is actually deprecated and will be raged at by pylint. apparently you're supposed to use e.args[0]. I find that weird personally, but that's what we've been doing lately
+37224609-1448-u	also do you need to use ``` logging.ERROR ```? i think you want logging.error which is a method, I believe ``` ERROR ``` is some sort of enum in the logging module (same thing with info vs INFO)
+37225117-1448-u	what is row[1] ? I find this all very specific... I'm not sure a CSV MR is even worth doing this for 81 accounts, especially not if we're writing code to match some weird csv format given to us by a customer. either fix the csv so that it only includes relevant information or extract the value pairs and defer tasks to do the actual operation in a vconsole script (with test runs on other environment for different agids).
+37360613-1443-nu	dunno if this needs to be an object really... could just be module functions/constants?
+37360629-1443-nu	doesnt look like this is used?
+37361669-1443-u	typo, ics should be cis
+37418319-1443-u	Why are we commenting out gutter_config? Does it add overhead on performance when there is nothing using it?
+36472768-1442-u	copy pasted docstring
+36472799-1442-u	I think this is a POST
+36472984-1442-u	should probably pass ``` require_https=true ``` so that it logs them out of the same CIS they were logged in to
+36473068-1442-u	also I think maybe we should start thinking about how to generalize this, since there's a very similar route calculation done in the landing page handlers. we should try to generalize what we can
+37020296-1442-nu	cool
+37020435-1442-nu	can this go on just the logout route? not sure if we want to kill the cache for all landing pages all the time
+37021367-1442-nu	:+1: 
+37021656-1442-nu	would rather us not worry about the issue for now. i think we want vauth middleware to set these header policies on authed routes all the time if we truly care
+35274386-1435-u	can replace this loop with ``` ndb.delete_multi(old_rss_feed_keys) ``` provided old_rss_feed_keys is just a list of the keys (looks like it)
+35006131-1432-u	We might have to keep an eye on this, that it doesn't slow down if it generates 'hits' in the datastore.  Or have a MR that cleans up the tokens and also cleans up the unique values
+35006252-1432-nu	:+1: 
+35006354-1432-u	Returns only the token
+35006424-1432-nu	Where was this being called from?
+35006960-1432-nu	Disregard my previous comment about the token Map Reduce, might want to think about deleting the unique value here as well.
+35007868-1432-u	This could be async'd before doing the nonce stuff
+35007965-1432-u	We ended up not using the SDK -- I wonder if this auth client should be in the sdk?
+35012759-1432-u	Also if theres no next_url -- might be confusing in logs
+35013046-1432-u	`if nonce_token.is_expired:` ?
+35013464-1432-u	The other ones should only be seen by people trying to break our shit, though they might get seen when we break our own shit... but this one could definitely happen to a real person mistakenly using the wrong credentials for the account they're trying to get to. Does making this not just a 403 screen fall under future stories?
+35015110-1432-u	I don't see any in this PR, but is there a plan to utilize this expiry kwarg? It seems weird to let people set their own
+35019394-1432-u	Hmm, that would be easy enough to do after the 5 minute expiry one was put. I think making it configurable adds overhead to understanding this stuff and a potential for misuse
+35027340-1432-u	Should be 401 for unauthorized
+35027731-1432-u	I agree with @dwalker-va we should either redirect user to VBC/partner dashboard where they could select correct account group. Or may be add a link in error page to go to the VBC/partner dashboard. But in both case we'll need to set vbc session in CIS
+34573618-1427-u	I definitely don't think we need all three of these. Looks like our AccountUpdateHandler only takes AccountId and CustomerIdentifier, we should probably stick with just those 2. You could also probably use the `get_account_from_args` from that handler as well.  Or use this one and change the other one to use this one.
+34578448-1427-nu	:+1: 
+34584884-1427-nu	:+1: 
+34585366-1427-u	you didnt change this but extra comma after _. minorly surprised that is valid python
+34585632-1427-u	I think it's like a trailing `,` in an list or dictionary
+34067320-1422-u	it 'should not be postable' ?
+34067939-1422-nu	keep reading this as ```global-warming```
+34068495-1422-u	would prefer ```self.postable``` or ```self.isPostable``` rather than a negative boolean
+34069261-1422-u	no tests? :( good test would be to check that something is added to self.warnings on a 200, nothing added on 4xx/5xx
+34072417-1422-u	make sure to update these usages of `notPostable`
+34075873-1422-u	i think if we keep using fetch we gotta figure out how to unit test it. doesnt have to be now, but soon hopefully.
+34076052-1422-u	:+1: 
+34065670-1421	Not hotjar but may be GA.
+34067239-1421-u	If the user comes from email to the landing page and they won't have anywhere to go back to as it will open in a new tab. Should we have link to `/overview/` here ?
+34067271-1421-nu	:+1: 
+34068277-1421-u	Looks like you can get the length https://msdn.microsoft.com/en-us/library/ms534105%28v=vs.85%29.aspx
+34068341-1421-nu	I think these are good, then they can show up in ga stats
+34072707-1421-nu	I like the error pages being seperate
+33951247-1416-u	@jprokop-va turned this off for test I think?
+33951530-1416-u	Yeah, just demo and prod IMO
+33951623-1416-u	:+1: I think this can actually be determined by the page they're on, but I think this is neat
+33938377-1415-nu	:+1: 
+33872063-1412-nu	Our sdk generation keeps flipping this back and forth :person_frowning: 
+33827973-1410-u	![image](https://cloud.githubusercontent.com/assets/7460285/8489052/ffaefd40-20d4-11e5-823d-36477178b3e9.png) is this intentionally called foo? lol
+33828262-1410-nu	is there a variable with a better name for this? assigning $WHITE_FONT_COLOR to styling on a td border is pretty weird. There is $WHITE_BACKGROUND_COLOR... Is there a WHITE_BORDER_COLOR or something like that which can be used?
+33828377-1410-nu	same kinda comment as I had about border color, assigning $SECONDARY_FONT_COLOR to a box shadow variable is odd. Is there an equivalent variable with a better suited name already, or what do you think would be more appropriate?
+33828865-1410-nu	You'll have to update the vcompose library to change these as the next time we bring the updated library into SM it will over write them
+33829032-1410-nu	@jrolheiser-va repo for vcompose located here: https://github.com/vendasta/VA-vcomponents
+33801229-1409-u	could do ``` feed = feed or legacy_feed if feed:     feed.key.delete() ```
+33801471-1409-u	I would do: ```python feed = key.get() if feed:   return key.delete() legacy_feed = UserRssFeedModel.build_key(account_id, pid, url, legacy=True).get() if legacy_feed:   return return legacy_feed.key.delete() raise SMExceptionNotFound("RSS Feed entity not found for Key: %r", key) ```  This will prevent us doing an additional key.get if we find the first one.
+33624099-1408-nu	included jquery but aren't using it?
+33624199-1408-nu	typo ``` self. notificationBannerCookie ```
+33624263-1408-u	what's the reasoning behind the 30 day expiry?
+33624515-1408-u	i think if they dismiss it, we never want it to expire. they can clear their cookies ofc, but it'd be weird to see it come back after a month.
+33626286-1408-u	`Setup Notifications` here but `Setup notifications` in the cta, not sure which but I think should be same
+33626351-1408-u	indent
+33278732-1405-nu	o_O @ github's formatting here
+33278914-1405-nu	this also applies to phones?
+33280793-1405-u	This should already be imported from the fec-base
+33359329-1398-nu	I think we should change it to use vapi AjaxHandler
+32942607-1390-u	You could delete this old codes
+32953852-1390-u	I'd prefer a class over specifying it like this.
+32076308-1384-nu	indent
+32076577-1384-u	Shouldn't need this anon function here
+32161518-1384-nu	Only check postable services?
+31940875-1383-u	`return_value=self.account`, no spacing around `=`
+31947929-1383-u	shouldn't the product be 'GS' here ?
+31933950-1382-nu	what are your thoughts on putting this in FEC? I like the idea of hide, pull-left, pull-right utility classes
+31933973-1382-u	indent
+31934059-1382-nu	I like the idea that it's in it's own row.  It separates that from the actual template better
+31767096-1376-nu	hehehe
+31772502-1376-nu	I think that was probably me :) 
+31359364-1369-u	To lock FronEndCentral to 0.1.0 version for SM, this should be updated to `"FrontEndCentral": "https://github.com/vendasta/FrontEndCentral.git#~0.1.0"`
+31360087-1369-u	I don't think we need 2 ways to call `get_partner_whitelabel_config` as `market_id` is `None` by default.
+31361120-1369-u	What is this text binding for?
+31361427-1369-u	mauve mauve mauve mauve mauve mauve mauve mauve
+31428120-1369-u	These should be in `devDependencies` as they are required to compile css.
+31428529-1369-u	On the second thought, I think it's good to have it in `dependencies` as they compile css which are required to run the project.
+31435002-1369-nu	woo, love that markup
+31435121-1369-nu	I don't think we need versioned routes for UI. Can we just have `/public/post/details/...`
+31340262-1365-nu	@bbassingthwaite-va, what is this? And what happens if it's not here? Because I never wrote this before for the pipelines I made but I was able to find pipelines in the datastore.
+31340919-1365-nu	@bbassingthwaite-va so this method operates on two different entity groups. One is with the legacy with the parent key and the other is the migrated leads model, right?
+31341144-1365-u	I think you missed test_ here: test_migrate_deletes_legacy_key 
+31341214-1365-nu	@bbassingthwaite-va what's the message for?
+31155883-1361-u	doc string.
+29971636-1341-nu	When can this happen?
+30138628-1340-u	If we're not using cached social profile, it is better to remove these functions that caching social profile.
+29863161-1339-u	You can reduce nesting by combining these two `if`s since there is no other path. You also check `has_sm` in both branches so maybe this could be simplified further? ```py if entity.has_sm:   account = acount_key.get()   if account and entity.deleted_flag:     # delete   elif account:     # update   else:     # why isn't there a SM account? ```     
+29863901-1339-u	You don't need to do the get here, it doesn't provide any value the delete call will check that the account exists before it deletes it
+29864359-1339-u	I think this should go in the post put hook of the account group.  Instead of tying the deleting of the SM account to the pubsub message, it would then be tied to the actuall pseudo delete of the account group
+29890952-1339-nu	Have `UpdateAccountGroupHandler` already been removed?
+29948219-1339-u	with this we'd now be using the pubsub message to delete accounts when they are removed from the account group?  I don't think that will cause any issues, I just want to confirm that's the intended behaviour as we will probably still be recieving the api calls to do that.
+29948407-1339-u	Looks like you are passing the key in here, and not the account id, I don't think that will work
+29948921-1339-u	Since the `message` here is an account group vobject, we could maybe rename these to be a bit simpler to understand, but since we're doing stuff with `account.account_group` that might make it confusing. Just a comment for future `VMessageHandler`s.
+30073903-1339-nu	Not a fan of this put directly in the process function (which is the view), isn't there a transactional (or in this case a function that would join the transaction) update sm account function?
+29440551-1332-u	This is a weird comment, and doesn't really mean anything
+29440656-1332-u	Most of these comments for the following properties don't provide any information, can you please remove them
+29440876-1332-nu	return: geopoint created from the lat/long of the account group would be more appropriate as this doesn't actually augment the account group
+29440880-1332-u	I think this should be the same one as on the account group? (ie computed)
+29440994-1332-u	oh man, is this actually a thing for SM still? I don't have the context, maybe @utandukar-va would know
+29441380-1332-u	So if they change the business name in VBC I don't think it'll reflect here because this isn't computed right now
+29441472-1332-nu	hm can we use any of the various service category-ish things from the account group instead?
+29441901-1332-nu	where is this used? are you guys writing a mapreduce or can you explain the migration scheme?
+29442715-1332-u	No, they are all paid, this could be removed
+29443134-1332-u	I would really like that to be the case too, but there's some weirdness now surrounding cases where they can change in other products.  So, I've been instructed to do it this way for now.  Hopefully there will be some work done in the near future to sort out what we're doing with customer IDs across the board.
+29443265-1332-u	they can change in different products??? Or the products themselves have customer ids that aren't related to the customer id of their parent account group? That would make sense to me
+29443404-1332-u	ya if thats the case my recommendation would be to just not migrate this data at all. it certainly doesnt mean anything to vbc or anyone else (i presume)
+28980655-1325-u	`margin: 0 10px 0 0;` or only `margin-right: 10px` if possible
+28980764-1325-u	`margin: 0`
+28925821-1323-u	I missed this in the last PR, but I think the usage of `reduce` is a little confusing here. `some` seems like the more appropriate thing semantically, and is a little less complex. ```js var hasPostableService = self.postableServices.some(function(service) {   return service.ssid == self.ssid; }); return hasPostableService; ```
+28819617-1320-u	Could be something like this. Not sure if there is a native javascript way... ```js var validService = ko.util.arrayFirst(self.postableServices, function(service) {   return service.ssid == self.ssid; } return Boolean(validService) ```
+28819853-1320-u	seems like you just want to return a falsy value for post() if ``` !post().hasValidPostableService() ```? could check it before you assign the ``` self.post ``` observable in SocialPostLandingPage.js (or maybe the factory? not sure how that works). would remove the need for these &&s
+28824477-1320-u	would be something like  ``` javascript var validService = self.postableServices().reduce(function(previousValue, currentValue{   return previousValue || currentValue.ssid == self.ssid }), false); ``` https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce
+27433948-1311-nu	``` self.postType == 'post' && self.isScheduled() ``` if that's your thing
+27435678-1311-nu	The alternative to `post`, `mention` (or maybe it's `lead`), only applies to Twitter
+23724671-1268-u	```kwargs.get(KEYS.NAME) is None``` may be a little more clear as to what the intent of this is. 
+23774684-1265-u	`should be Your Post`
+22830128-1245-u	Can you move this up so that its beside, the declaration for the vff_base_url? Probably should be var versionedBaseUrl as well.
+22730522-1244-nu	Nice! I think we could go further with this file as it's kind of confused now. Maybe not this branch but soon. In SM.js we're still: 1. Setting ajaxSettings traditional to true. This was designed to be done  globally, but now that we're using requirejs we still have to note SM.js as a dependancy anywhere where we actually need this 2. Setup the SlidingListViewModel which is only used in the settings section and could probably go there or into a separate file 3. Setup some string constants which are either no longer used or used once in the settings section
+22689162-1241-u	Do we need this shim here are all for jQuery? My undstanding that the jquery will always register itself a the global $ or jQuery.
+22597964-1236-nu	Should these be using `uri_for` too?
+22374354-1228-u	should be ```ndb.transaction()```
+22319718-1221-nu	Can you put this into a BaseVFilter handler and inherit from that.  I think this is the 3rd set of this code
+22187079-1220-u	can this function  be changed to call super get_comment_dict, then add the profileImageUrl to the dict
+22005457-1217-u	There is nothing, really wrong with defining the form in this fashion (and our other filters are defined this way). However, this is the old / hopefully eventually deprecated way of creating a vForm. Can we convert this to the Form fields method? EG: http://vff-dev.appspot.com/styles/filters/#simple-filter
+22124723-1217-nu	It is bit confusing, here `self` means the republishing item.
+21868524-1214-u	Could you just have the context as `self`here instead of `profileImageUrl`, then you could have a function on the viewmodel instead of this anonymous function in the html? Also, I'd prefer using the `visible` data-bind on these instead of the knockout control tags (not sure what to call those), if you need them or just prefer them more, I think we should at least still do indentation within them to make the scope easier to read.
+21702909-1208-nu	I think this should be in `componet/coupons.html` so that all the html required for the components are in a single file.
+21703084-1208-u	two `coupon_name =`?
+21568344-1203-u	Should probably use `<span>` instead so that there is no hover effect.
+21568431-1203-u	same here, `<span>` instead of `<a>`
+21483732-1194-u	Generator could be handy here. ``` try:     original_post_idx = (i for i,item in enumerate(raw_comments) if item['socialPostId']== post_id).next()     return raw_coments[:original_post_idx], True except StopIteration:     return [], False ```
+21484098-1194-nu	I thought this should be `postedDateTime` as `postCreatedDateTime` is the one that is recorded at core side.
+21268206-1189-u	Do we really need `CoreSocialTestCase` here? I don't think it is needed
+21269125-1189-u	I find the `with` syntax much more readable since it's how the code is actually called, something like ```py with self.assertRaises(ValueError):     publish_comment('agid', 'ssid', 'comment_text', None, 'post_type') ```
+21271292-1189-nu	I think the behaviour of `AbstractTwitter`'s comment dict isn't being tested anymore since removing this, maybe just a new test case under `AbstractTwitter`?
+21307454-1189-u	@jprokop-va good catch, it should be something like `/_ajax/comment/post/` for the form of `object/action`
+21260502-1188-u	`dismiss` should be `dismissed` I believe
+21031861-1182-u	not a big deal but could these be in a format of an actual url. e.g. /postLandingPageUrl/
+21035251-1182-nu	For Facebook and Google+ we get different `commentText` and `commenterName` key with the same name and only for Twitter we are getting it with `postText` and `username`. I changed this in the reply to mention branch as we are going to use v2 endpoint to reply to Facebook, Twitter, Google+ social post and social mention there.
+20615266-1179-nu	Seems like this should be `toBe(true)`. This would pass for `self.cta.isLoading([1])`? Would still work for the code I suppose but just seems unnecessarily broad.
+20616248-1179-nu	Fair, if we start using `1` as our truth value we wont need to change anything :+1: 
+20648670-1179-nu	Comment should point out that we are using `data_points` instead of `end_date`
+20447817-1169-u	Require.js can't figure out that `inheritance` is a dependency based on the fact that it's a dependency for `SM.Feeds`? That seems wrong...
+19946637-1161-nu	Is XRegExp something that could be useful to other products too? If yes its better to add it to VFF.
+19946679-1161-nu	In SpecRunner its still using 1.11.0
+19608507-1155-u	Please don't do this `**{}`, it just requires extra effort creating a dictionary and then unpacking it. Just specify the kwargs directly: ```python self.create_partner(pid='ABC', name='Partner ABC', api_key='abc-key', hostname='partner_abc.socmktg.com') ```
+19614328-1155-u	You don't need to wrap this in another anonymous function; just pass `attachDeleteHandler` here.
+19614353-1155-u	Is the `draw.dt` event failing to trigger when the table is first drawn?
+19618183-1155-u	This will cause the attachDeleteHandler to be called twice whenever the table is redrawn. You should only need one of these, is there a reason you have both?
+19570673-1154-u	You guys should still be hosting your own version of vForm in the project... VFF's vForm could change any time and possibly break SM.
+19570932-1154-nu	I'm not sure this should be exporting vFilter, because then it hides access to the other globals such as vForm, doesn't it?
+19247591-1144-u	if this is supposed to be the taxonomy_id I would go with ```tax_id```
+19247808-1144-u	This is a kind of gross key string. all terms should probably be hashed. eg:  ``` key_id = hashlib.md5(key_id).hexdigest() ```
+19282063-1144-u	This is just my minor preference, but instead of indenting the entire method I would just return here if `spid` is not present. I think it makes the code more readable.
+19282376-1144-u	Is this "no commit" path just for testing? If so wouldn't it be valuable to still construct the `lead_search` entity?
+19282439-1144-u	Minor, but `get` returns `None` by default so including it as the default arg is unnecessary.
+19087261-1140-nu	Why can't you just set `category = feed.taxonomy_id`? You are just setting `category` again after that if statement (unless I'm missing something).
+19087394-1140-nu	Never ever `put` in a view. This needs to go in a domain method.
+19087576-1140-u	What is `withGritterLocation`? I've never seen it before.
+19094167-1140-nu	Why do you need to call `captalize`? My question is where `category` is used that it needs to be capitalized?
+19108647-1140-u	Can you return the actual `feed` item? Usually we return the entity (or corresponding domain object) after create/update.
+19109253-1140-nu	cases like: - set values of the model and check if isValid will return what is expected - check if the correct path is being called when adding rss - adding another rss while addingRssFeed is still true and check if it really ignores the call - check for reset function - intentionally returning 400 to the ajax call and check the result  future cases could be: - editing an rss - deleting an rss
+18957939-1137-u	I think I'd prefer to just take all this and put it in a separate `lookup_rss_feeds` method to avoid cluttering the `get`.
+18958087-1137-u	I think you could just `name, _, category = feed.name.partition(', ')` and then i guess test `category` exists.
+18657576-1131-nu	Should this be getting account if either `account_id` or `customer_identifier` provided? It says `get_account_from_args` but gets account using `account_id` only.
+18660246-1131-nu	I agree that it is only used by the update endpoint, however - This could be enough reason for us to create a mixin specifically for the update endpoint (thoughts on this?) - Since this is doing only validation it should probably start with ```validate_arg_``` which is being used by vApi for initial validation before calling the ```pre_process_hook```
+18663565-1131-nu	Is this a valid string format? I haven't seen it before with just `{}`.
+18548980-1125-nu	I'm a bit confused, what is this url going to look like? Isn't `back_to_page` one of `AccountKeys`?
+18460504-1119-nu	Is it possible for `unique` to be in transaction so that when create fails it is not created?
+18461170-1119-nu	I didn't realize there was so much logic for setting `unique`. Now I also think this probably is a solution for that.
+18460211-1118-u	Can we have the function name as `is_valid_url` and do all sort of validation check for url here, instead of just checking for float value. In future there might be different issue to check something else in the url and you could just throw it in the validation function.
+18460538-1118-u	I think we should use a regular expression match here. It's concievable that someone could post an FTP link, and this would turn an FTP link into `http://ftp://rest-of-url.tld`
+18252956-1109-u	You can try declaring the mock above the test class (it will pass the mock into every method). See https://github.com/vendasta/VBC/blob/develop/test/views/api/v3/internal/account_group_test.py#L33 for an example.  Another option is declaring a magicmock with a return value above each test method, like  ```@mock.patch('app.views.messages.account_group.fetch_product_pid', mock.MagicMock(return_value=self.pid, tracker=None))```. Declaring a magicmock means you do not have to pass the mock into the method directly (it does its 'magic' in the background) but you also can't access it directly (to assert anything). You can combine these methods to really clean things up. I'm not sure setting the tracker property to None is required at all unless you are seeing an error with the default options.
+18302873-1109-u	You aren't returning here. Are the `kwargs` still declared above? Is it intended that the code continue to execute to the update method below if the delete flag is present?
+18344851-1109-u	In Presence Builder, we had some cases in past where account group got deleted after few seconds of its creation and in PB account was in the middle of creation. Therefore, it caused an account which have deleted account group. Does `delete_account_entity` handles this case? I'm not sure if SM has this kind of issue or it might already be handling it. 
+18174201-1104-u	`.lower()` this.
+18093720-1100-u	What's the difference between this and `deletePastPost`?
+18364825-1100-u	You should use the `get_nested_dict_value` function I created in `utils`.
+18401982-1100-u	Why are you getting `POSTED_DATETIME` instead of `SOCIAL_SERVICE_CREATED_DATETIME` from comment?
+18402145-1100-nu	Should this be `{0}/{1}/{2}`?
+18921016-1100-u	Should `username` have a key?
+18921203-1100-nu	`None`?
+17872478-1095-u	You could just `data.itervalues()`.
+17872696-1095-nu	Where does this `reduce` method come from? How come `acc` is an array here but below `sum` is an integer?
+17872713-1095-u	I believe `past_total` should be `pastTotal`.
+17873045-1095-u	`negative` if 0?
+17881133-1095-u	suggestion, instead of passing ```now``` to both methods, why not get the current utc datetime inside each method. I think that will be cleaner.
+17738487-1089-u	I think this can be simplified to `if len(args.get(V2_API_KEYS.ACCOUNT_TAXONOMY_ID, [])):`  edit: more simplification.
+17739214-1089-u	ma be `if not args.get(V2_API_KEYS.ACCOUNT_TAXONOMY_ID)` would work
+17626633-1083-u	Not a fan of the name. Perhaps something like AbstractTwitterSocialPost or BaseTwitterSocialPost?
+17672416-1083-u	Personally even if you use "TwitterObject" I agree it should have "Base" or "Abstract" prefix to make it clear this object should not be instantiated, only its children.
+17566241-1081-u	can also do this to remove extra ```if``` condition, i think: ```` if tag == 'archived':     tag = 'relevant'     kwargs['maxDateTime'] = get_leads_cutoff_time() elif tag == 'relevant':     kwargs['minDateTime'] = get_leads_cutoff_time() ````
+17554220-1078-u	Why the empty string in `''+leads`?
+17369916-1073-nu	Will the 'socialPostId' suffer the same rounding errors due to the js Number class?
+17303422-1067-u	Minor but I think something like `get_nested_dict_value` might be more appropriate. Otherwise its just confusing why you would need a method at all to get a dict value.
+17243508-1066-u	These are _AccountModel_ keys correct? Labelling them as `agid_keys` seems misleading.
